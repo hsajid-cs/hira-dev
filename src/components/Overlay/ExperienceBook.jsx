@@ -77,7 +77,7 @@ export default function ExperienceBook() {
           {currentPage === 0 ? (
             <div className="book-cover">
               <div className="book-cover-deco">· · ✦ · ·</div>
-              <div className="book-cover-title">The Journey So Far</div>
+              <div className="book-cover-title">Professional Experience</div>
               <div className="book-cover-deco">❧</div>
               <div className="book-cover-sub">{experienceData.entries.length} chapters</div>
             </div>

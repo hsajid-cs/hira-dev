@@ -4,7 +4,7 @@ export default function Notebook() {
       <div className="notebook">
         <div className="notebook-title">projects</div>
       </div>
-      <div className="notebook-label">my work ↗</div>
+      <div className="notebook-label">Projects ↗</div>
     </div>
   );
 }

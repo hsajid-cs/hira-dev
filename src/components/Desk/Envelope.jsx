@@ -1,7 +1,7 @@
 export default function Envelope() {
   return (
     <div className="envelope-wrap">
-      <div className="envelope-label">open me ✦</div>
+      <div className="envelope-label">About ✦</div>
       <div className="envelope">
         <svg className="envelope-wax" viewBox="0 0 40 40">
           <circle cx="20" cy="20" r="18" fill="#3a1a5a" opacity="0.95" />

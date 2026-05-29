@@ -53,8 +53,8 @@ export default function AboutSection() {
 
       {/* Contact links */}
       <div className="letter-entry" style={{ borderBottom: 'none' }}>
-        <div className="letter-entry-title">find me</div>
-        <div className="letter-entry-meta">say hi, i don't bite</div>
+        <div className="letter-entry-title">Contact</div>
+        <div className="letter-entry-meta">Get in touch</div>
         <div style={{
           display: 'flex',
           flexWrap: 'wrap',

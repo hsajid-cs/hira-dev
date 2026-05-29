@@ -47,15 +47,15 @@ export default function Postcard({ variant = 'default' }) {
         </div>
         <div className="postcard-content">
           <div className="postcard-content-label" style={labelColor ? { color: labelColor } : {}}>
-            {isGreen ? 'beyond code' : 'field notes'}
+            {isGreen ? 'Credentials' : 'Research'}
           </div>
           <div className="postcard-content-title" style={titleColor ? { color: titleColor } : {}}>
-            {isGreen ? 'extras & certs' : 'research work'}
+            {isGreen ? 'Certifications' : 'Research Work'}
           </div>
         </div>
       </div>
       <div className="postcard-label">
-        {isGreen ? 'extracurriculars' : 'research'}
+        {isGreen ? 'certifications' : 'research'}
       </div>
     </div>
   );

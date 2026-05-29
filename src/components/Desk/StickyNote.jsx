@@ -8,12 +8,12 @@ export default function StickyNote() {
       <div className="sticky-note">
         <div className="sticky-note-text">
           {isMobile
-            ? 'wall of love'
-            : '"she debugged my life &amp; my code in one afternoon"'}
+            ? 'Volunteering'
+            : 'Community Engagement'}
         </div>
-        {!isMobile && <div className="sticky-note-by">— a friend ✦</div>}
+        {!isMobile && <div className="sticky-note-by">service & outreach ✦</div>}
       </div>
-      <div className="sticky-label">wall of love</div>
+      <div className="sticky-label">volunteering</div>
     </div>
   );
 }

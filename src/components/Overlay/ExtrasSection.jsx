@@ -1,12 +1,12 @@
-import { extrasData } from '../../data/portfolioData';
+import { certificationsData } from '../../data/portfolioData';
 
-export default function ExtrasSection() {
+export default function CertificationsSection() {
   return (
     <>
-      <div className="letter-decoration">{extrasData.deco}</div>
-      <div className="letter-section-title">{extrasData.title}</div>
-      <div className="letter-section-sub">{extrasData.sub}</div>
-      {extrasData.entries.map((entry, i) => (
+      <div className="letter-decoration">{certificationsData.deco}</div>
+      <div className="letter-section-title">{certificationsData.title}</div>
+      <div className="letter-section-sub">{certificationsData.sub}</div>
+      {certificationsData.entries.map((entry, i) => (
         <div className="letter-entry" key={i}>
           <div className="letter-entry-title">{entry.title}</div>
           {entry.meta && <div className="letter-entry-meta">{entry.meta}</div>}

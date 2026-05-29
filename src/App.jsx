@@ -75,8 +75,8 @@ export default function App() {
       Component: () => <Postcard variant="default" />,
     },
     {
-      id: 'item-love',
-      section: 'love',
+      id: 'item-volunteering',
+      section: 'volunteering',
       left: '50%',
       top: '58%',
       mobileLeft: '26%',
@@ -86,8 +86,8 @@ export default function App() {
       Component: StickyNote,
     },
     {
-      id: 'item-extras',
-      section: 'extras',
+      id: 'item-certifications',
+      section: 'certifications',
       left: '74%',
       top: '52%',
       mobileLeft: '62%',
@@ -151,7 +151,7 @@ export default function App() {
         {/* Scatter hint */}
         {!isMobile && (
           <div className="scatter-hint">
-            drag things around · click to open
+            Drag to rearrange · Click to open
           </div>
         )}
       </div>

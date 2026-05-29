@@ -4,20 +4,20 @@ import AboutSection from './AboutSection';
 import ExperienceBook from './ExperienceBook';
 import ProjectsDeck from './ProjectsDeck';
 import ResearchSection from './ResearchSection';
-import ExtrasSection from './ExtrasSection';
-import WallOfLove from './WallOfLove';
+import CertificationsSection from './ExtrasSection';
+import VolunteeringSection from './VolunteeringSection';
 
 const sectionComponents = {
   about: AboutSection,
   projects: ProjectsDeck,
   experience: ExperienceBook,
   research: ResearchSection,
-  love: WallOfLove,
-  extras: ExtrasSection,
+  certifications: CertificationsSection,
+  volunteering: VolunteeringSection,
 };
 
 // Sections that use the letter wrapper vs custom full layouts
-const letterSections = ['about', 'research', 'extras'];
+const letterSections = ['about', 'research', 'certifications', 'volunteering'];
 
 export default function LetterOverlay({ section, onClose }) {
   useEffect(() => {
