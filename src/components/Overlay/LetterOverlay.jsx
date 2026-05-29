@@ -41,6 +41,10 @@ export default function LetterOverlay({ section, onClose }) {
     }
   };
 
+  const bodyClassName = section === 'projects'
+    ? 'letter-body letter-body-projects'
+    : 'letter-body';
+
   return (
     <div className={`overlay ${section ? 'open' : ''}`} onClick={handleOverlayClick}>
       <div className="overlay-bg" onClick={onClose} />
@@ -51,7 +55,7 @@ export default function LetterOverlay({ section, onClose }) {
               ✕ &nbsp; fold back
             </button>
             <div className="letter-flap" />
-            <div className="letter-body">
+            <div className={bodyClassName}>
               <SectionComponent />
             </div>
           </div>
@@ -60,7 +64,7 @@ export default function LetterOverlay({ section, onClose }) {
             <button className="letter-close" onClick={onClose}>
               ✕ &nbsp; close
             </button>
-            <div className="letter-body" style={{ padding: '1rem 1.5rem 1.5rem' }}>
+            <div className={bodyClassName} style={{ padding: '1rem 1.5rem 1.5rem' }}>
               <SectionComponent />
             </div>
           </div>

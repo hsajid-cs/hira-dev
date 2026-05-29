@@ -29,14 +29,67 @@ export default function App() {
     setActiveSection(null);
   }, []);
 
-  // Desktop positions for desk items
   const deskItems = useMemo(() => [
-    { id: 'item-about', section: 'about', left: '12%', top: '18%', rotation: rotations[0], Component: Envelope },
-    { id: 'item-projects', section: 'projects', left: '34%', top: '12%', rotation: rotations[1], Component: Notebook },
-    { id: 'item-experience', section: 'experience', left: '58%', top: '20%', rotation: rotations[2], Component: Scroll },
-    { id: 'item-research', section: 'research', left: '20%', top: '55%', rotation: rotations[3], Component: () => <Postcard variant="default" /> },
-    { id: 'item-love', section: 'love', left: '50%', top: '58%', rotation: rotations[4], Component: StickyNote },
-    { id: 'item-extras', section: 'extras', left: '74%', top: '52%', rotation: rotations[5], Component: () => <Postcard variant="green" /> },
+    {
+      id: 'item-about',
+      section: 'about',
+      left: '12%',
+      top: '18%',
+      mobileLeft: '6%',
+      mobileTop: '12%',
+      rotation: rotations[0],
+      Component: Envelope,
+    },
+    {
+      id: 'item-projects',
+      section: 'projects',
+      left: '34%',
+      top: '12%',
+      mobileLeft: '62%',
+      mobileTop: '8%',
+      rotation: rotations[1],
+      Component: Notebook,
+    },
+    {
+      id: 'item-experience',
+      section: 'experience',
+      left: '58%',
+      top: '20%',
+      mobileLeft: '8%',
+      mobileTop: '44%',
+      rotation: rotations[2],
+      Component: Scroll,
+    },
+    {
+      id: 'item-research',
+      section: 'research',
+      left: '20%',
+      top: '55%',
+      mobileLeft: '58%',
+      mobileTop: '42%',
+      rotation: rotations[3],
+      Component: () => <Postcard variant="default" />,
+    },
+    {
+      id: 'item-love',
+      section: 'love',
+      left: '50%',
+      top: '58%',
+      mobileLeft: '10%',
+      mobileTop: '72%',
+      rotation: rotations[4],
+      Component: StickyNote,
+    },
+    {
+      id: 'item-extras',
+      section: 'extras',
+      left: '74%',
+      top: '52%',
+      mobileLeft: '56%',
+      mobileTop: '74%',
+      rotation: rotations[5],
+      Component: () => <Postcard variant="green" />,
+    },
   ], []);
 
   return (
@@ -61,12 +114,25 @@ export default function App() {
 
         {/* Desk items */}
         <div className="desk-items-container">
-          {deskItems.map(({ id, section, left, top, rotation, Component }) => (
+          {deskItems.map(({
+            id,
+            section,
+            left,
+            top,
+            mobileLeft,
+            mobileTop,
+            rotation,
+            Component,
+          }) => (
             <DeskItem
               key={id}
               id={id}
               section={section}
-              style={{ left, top }}
+              style={
+                isMobile
+                  ? { left: mobileLeft, top: mobileTop }
+                  : { left, top }
+              }
               rotation={rotation}
               onClick={openSection}
             >

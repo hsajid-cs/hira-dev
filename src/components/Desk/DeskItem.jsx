@@ -15,7 +15,7 @@ export default function DeskItem({ id, style, section, onClick, rotation, childr
   };
 
   const itemStyle = isMobile
-    ? {}
+    ? { ...style }
     : {
         ...style,
         transform: `rotate(${rotation || 0}deg)`,

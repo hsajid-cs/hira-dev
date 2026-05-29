@@ -2,6 +2,12 @@
 @media (max-width: 768px) {
   html, body {
     cursor: default;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  #root {
+    height: 100%;
   }
 
   .custom-cursor {
@@ -25,6 +31,17 @@
   /* Items use touch instead of drag cursor */
   .item {
     cursor: pointer;
+  }
+
+  .desk {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  .item {
+    position: absolute;
+    transform: none;
   }
 
   /* Scatter hint hidden on mobile */

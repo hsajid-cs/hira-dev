@@ -34,12 +34,12 @@ export default function ProjectsDeck() {
   };
 
   const next = useCallback(() => {
-    setActiveIndex(i => Math.min(i + 1, cards.length - 1));
+    setActiveIndex(i => (i + 1) % cards.length);
   }, [cards.length]);
 
   const prev = useCallback(() => {
-    setActiveIndex(i => Math.max(i - 1, 0));
-  }, []);
+    setActiveIndex(i => (i - 1 + cards.length) % cards.length);
+  }, [cards.length]);
 
   // Swipe support
   const { onTouchStart, onTouchMove, onTouchEnd } = useSwipe(next, prev);
@@ -93,10 +93,10 @@ export default function ProjectsDeck() {
       </div>
 
       <div className="deck-nav">
-        <button className="deck-nav-btn" onClick={prev} disabled={activeIndex === 0}>
+        <button className="deck-nav-btn" onClick={prev}>
           ←
         </button>
-        <button className="deck-nav-btn" onClick={next} disabled={activeIndex === cards.length - 1}>
+        <button className="deck-nav-btn" onClick={next}>
           →
         </button>
       </div>
