@@ -1,0 +1,104 @@
+@media (max-width: 768px) {
+  html, body {
+    overflow: auto;
+    cursor: default;
+  }
+
+  .custom-cursor {
+    display: none !important;
+  }
+
+  .desk {
+    position: relative;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .desk-surface {
+    position: fixed;
+    inset: 0;
+  }
+
+  .grain {
+    position: fixed;
+  }
+
+  .scatter-hint {
+    display: none;
+  }
+
+  /* Stack items vertically on mobile */
+  .desk-items-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2rem 1rem;
+    padding-top: 3rem;
+    z-index: 10;
+  }
+
+  .item {
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    transform: none !important;
+    cursor: pointer;
+  }
+
+  .item:hover {
+    filter: drop-shadow(2px 8px 24px rgba(0,0,0,0.85)) brightness(1.05);
+  }
+
+  /* Candle stays decorative at top */
+  .candle-container {
+    position: fixed !important;
+    top: 10px;
+    right: 15px;
+    z-index: 15;
+    transform: scale(0.7);
+  }
+
+  /* Intro adjustments */
+  .intro {
+    cursor: pointer;
+  }
+}
+
+@media (max-width: 480px) {
+  .desk-items-container {
+    padding: 1.5rem 0.8rem;
+    gap: 1.2rem;
+  }
+
+  .envelope-wrap {
+    width: 160px;
+  }
+  .envelope {
+    width: 160px;
+    height: 106px;
+  }
+
+  .notebook {
+    width: 120px;
+    height: 150px;
+  }
+
+  .scroll-item, .scroll-body, .scroll-roller {
+    width: 115px;
+  }
+  .scroll-body {
+    height: 95px;
+  }
+
+  .postcard {
+    width: 175px;
+    height: 115px;
+  }
+
+  .sticky-note, .sticky-item {
+    width: 115px;
+    height: 115px;
+  }
+}

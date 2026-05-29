@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>your name · come in, look around</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --wood-dark: #1a1208;
+  --wood-mid:  #2a1e0e;
+  --wood-light:#3d2c14;
+  --wood-grain:#221808;
+  --green:     #4a7c59;
+  --green-l:   #7aaa8a;
+  --purple:    #7c5fa0;
+  --purple-l:  #b08ad0;
+  --gold:      #c9a84c;
+  --parchment: #f0e8d0;
+  --parch-dim: #c8b890;
+  --ink:       #1a1408;
+  --shadow:    rgba(0,0,0,0.7);
+}
+
+html, body {
+  width:100%; height:100%;
+  overflow:hidden;
+  cursor:none;
+  font-family:'DM Mono', monospace;
+  background: var(--wood-dark);
+  user-select: none;
+}
+
+/* ── custom cursor ── */
+#cur {
+  position:fixed; width:20px; height:20px;
+  pointer-events:none; z-index:99999;
+  transform:translate(-50%,-50%);
+  transition: transform 0.15s ease;
+  mix-blend-mode: screen;
+}
+#cur svg { width:100%; height:100%; }
+
+/* ── DESK SURFACE ── */
+#desk {
+  position:fixed; inset:0;
+  overflow:hidden;
+}
+
+/* wood grain via CSS */
+#desk-surface {
+  position:absolute; inset:0;
+  background:
+    repeating-linear-gradient(
+      88deg,
+      transparent 0px,
+      transparent 18px,
+      rgba(10,6,0,0.18) 18px,
+      rgba(10,6,0,0.18) 19px,
+      transparent 19px,
+      transparent 38px,
+      rgba(15,9,2,0.12) 38px,
+      rgba(15,9,2,0.12) 39px
+    ),
+    repeating-linear-gradient(
+      92deg,
+      transparent 0px,
+      transparent 60px,
+      rgba(5,3,0,0.08) 60px,
+      rgba(5,3,0,0.08) 62px
+    ),
+    radial-gradient(ellipse at 20% 30%, #2e1f0a 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 70%, #251808 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, #2a1e0e 0%, #130d04 100%);
+}
+
+/* soft candlelight vignette */
+#desk-surface::after {
+  content:'';
+  position:absolute; inset:0;
+  background: radial-gradient(ellipse at 50% 40%,
+    rgba(180,120,40,0.06) 0%,
+    rgba(0,0,0,0.55) 70%,
+    rgba(0,0,0,0.8) 100%);
+  pointer-events:none;
+}
+
+/* grain overlay */
+#grain {
+  position:fixed; inset:0; z-index:1; pointer-events:none; opacity:0.04;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:160px;
+}
+
+/* ── intro whisper ── */
+#intro {
+  position:fixed; inset:0; z-index:500;
+  display:flex; align-items:center; justify-content:center;
+  flex-direction:column; gap:1rem;
+  background: #0a0804;
+  transition: opacity 1.2s ease;
+}
+#intro.gone { opacity:0; pointer-events:none; }
+#intro-name {
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic; font-size:clamp(2rem,6vw,5rem);
+  color: var(--parchment); letter-spacing:0.04em; opacity:0;
+  animation: fadeUp 1s ease 0.3s forwards;
+}
+#intro-sub {
+  font-size:0.6rem; letter-spacing:0.28em; text-transform:uppercase;
+  color: var(--parch-dim); opacity:0;
+  animation: fadeUp 1s ease 0.8s forwards;
+}
+#intro-hint {
+  font-size:0.55rem; letter-spacing:0.18em; color:rgba(200,184,144,0.4);
+  margin-top:2rem; opacity:0;
+  animation: fadeUp 1s ease 1.4s forwards;
+}
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(12px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ── DESK ITEMS (draggable) ── */
+.item {
+  position:absolute;
+  cursor:none;
+  z-index:10;
+  transition: filter 0.2s ease;
+  filter: drop-shadow(2px 6px 16px rgba(0,0,0,0.7));
+}
+.item:hover {
+  filter: drop-shadow(2px 8px 24px rgba(0,0,0,0.85)) brightness(1.05);
+  z-index: 20;
+}
+.item.dragging {
+  filter: drop-shadow(4px 12px 32px rgba(0,0,0,0.9)) brightness(1.08);
+  z-index: 50;
+  transition: none;
+}
+
+/* ── LETTER / ENVELOPE ── */
+.envelope-wrap {
+  position:relative;
+  width:180px;
+}
+.envelope-label {
+  font-size:0.5rem; letter-spacing:0.22em; text-transform:uppercase;
+  color: var(--parch-dim); margin-bottom:4px; text-align:center;
+  opacity:0.7;
+}
+.envelope {
+  width:180px; height:120px;
+  background: linear-gradient(160deg, #e8dfc0 0%, #d4c89a 100%);
+  border-radius:2px;
+  position:relative; overflow:hidden;
+  border: 0.5px solid rgba(160,130,60,0.4);
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+}
+/* envelope flap */
+.envelope::before {
+  content:'';
+  position:absolute; top:0; left:0; right:0;
+  height:65px;
+  background: linear-gradient(160deg, #ddd0a0 0%, #c8ba80 100%);
+  clip-path: polygon(0 0, 100% 0, 50% 65%);
+  border-bottom: 0.5px solid rgba(140,110,40,0.3);
+}
+/* envelope bottom fold lines */
+.envelope::after {
+  content:'';
+  position:absolute; bottom:0; left:0; right:0; top:0;
+  background:
+    linear-gradient(to bottom right, transparent 49.5%, rgba(140,110,40,0.15) 50%, transparent 50.5%),
+    linear-gradient(to bottom left, transparent 49.5%, rgba(140,110,40,0.15) 50%, transparent 50.5%);
+}
+.envelope-wax {
+  position:absolute; bottom:10px; left:50%; transform:translateX(-50%);
+  width:32px; height:32px; z-index:2;
+}
+
+/* ── NOTEBOOK ── */
+.notebook {
+  width:140px; height:170px;
+  background: linear-gradient(160deg, #1a2e1a 0%, #0f1f0f 100%);
+  border-radius:3px 8px 8px 3px;
+  position:relative;
+  border: 1px solid rgba(74,124,89,0.3);
+}
+/* spine */
+.notebook::before {
+  content:'';
+  position:absolute; left:0; top:0; bottom:0; width:14px;
+  background: linear-gradient(to right, #0a1a0a, #1a2e1a);
+  border-right: 1px solid rgba(74,124,89,0.25);
+  border-radius:3px 0 0 3px;
+}
+/* pages peek */
+.notebook::after {
+  content:'';
+  position:absolute; right:-3px; top:4px; bottom:4px; width:5px;
+  background: repeating-linear-gradient(to bottom,
+    #e8dfc0 0px, #e8dfc0 4px, #d4c89a 4px, #d4c89a 5px);
+  border-radius:0 2px 2px 0;
+}
+.notebook-title {
+  position:absolute; top:50%; left:50%; transform:translate(-42%,-50%);
+  font-family:'Cormorant Garamond',serif; font-style:italic;
+  font-size:0.85rem; color:var(--green-l); text-align:center;
+  line-height:1.4; writing-mode:vertical-rl; text-orientation:mixed;
+  letter-spacing:0.08em;
+}
+.notebook-label {
+  font-size:0.5rem; letter-spacing:0.22em; text-transform:uppercase;
+  color:var(--parch-dim); text-align:center; margin-top:4px; opacity:0.7;
+}
+
+/* ── SCROLL / ROLLED PARCHMENT ── */
+.scroll-item {
+  width:130px; text-align:center;
+}
+.scroll-body {
+  width:130px; height:110px;
+  background: linear-gradient(to right,
+    #c8ba80 0%, #e8dfc0 8%, #f0e8d0 50%, #e0d4a8 92%, #c0b070 100%);
+  position:relative; border-radius:4px;
+  box-shadow: inset 2px 0 8px rgba(0,0,0,0.2), inset -2px 0 8px rgba(0,0,0,0.2);
+}
+/* scroll roller top */
+.scroll-roller {
+  width:130px; height:16px;
+  background: linear-gradient(to bottom, #8a6820, #c9a84c, #8a6820);
+  border-radius:8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+}
+.scroll-text {
+  position:absolute; inset:12px 14px;
+  font-family:'Cormorant Garamond',serif; font-style:italic;
+  font-size:0.65rem; color:var(--ink); line-height:1.5; text-align:center;
+  background: repeating-linear-gradient(to bottom,
+    transparent 0px, transparent 13px, rgba(100,80,20,0.08) 13px, rgba(100,80,20,0.08) 14px);
+  overflow:hidden;
+}
+.scroll-label {
+  font-size:0.5rem; letter-spacing:0.22em; text-transform:uppercase;
+  color:var(--parch-dim); text-align:center; margin-top:6px; opacity:0.7;
+}
+
+/* ── CARD / POSTCARD ── */
+.postcard {
+  width:200px; height:130px;
+  background: linear-gradient(160deg, #f5eeda 0%, #e8dfc0 100%);
+  border-radius:3px;
+  border: 0.5px solid rgba(160,130,60,0.3);
+  position:relative; overflow:hidden;
+}
+.postcard-line {
+  position:absolute; top:0; bottom:0; left:120px; right:0;
+  border-left: 0.5px solid rgba(140,110,60,0.3);
+}
+.postcard-stamp {
+  position:absolute; top:10px; right:12px;
+  width:32px; height:38px;
+  border: 1.5px solid rgba(140,110,60,0.4);
+  background: linear-gradient(135deg, #ddd0a0, #c8ba80);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Cormorant Garamond',serif; font-size:1.2rem; color:var(--green);
+}
+.postcard-lines {
+  position:absolute; right:12px; bottom:16px; left:128px;
+  display:flex; flex-direction:column; gap:6px;
+}
+.postcard-lines span {
+  display:block; height:0.5px; background:rgba(140,110,60,0.25);
+}
+.postcard-content {
+  position:absolute; top:10px; left:10px;
+  width:100px;
+}
+.postcard-content-label {
+  font-size:0.45rem; letter-spacing:0.2em; text-transform:uppercase;
+  color:rgba(80,60,20,0.5); margin-bottom:4px;
+}
+.postcard-content-title {
+  font-family:'Cormorant Garamond',serif; font-size:0.85rem;
+  color:var(--ink); font-style:italic; line-height:1.3;
+}
+.postcard-label {
+  font-size:0.5rem; letter-spacing:0.22em; text-transform:uppercase;
+  color:var(--parch-dim); text-align:center; margin-top:4px; opacity:0.7;
+}
+
+/* ── STICKY NOTE ── */
+.sticky-item {
+  width:130px; height:130px;
+  position:relative;
+}
+.sticky-note {
+  width:130px; height:130px;
+  background: linear-gradient(135deg, #2d3d2d 0%, #243224 100%);
+  border-bottom: 3px solid #1a2418;
+  padding:14px;
+  position:relative; overflow:hidden;
+}
+.sticky-note::after {
+  content:'';
+  position:absolute; top:0; right:0;
+  width:0; height:0; border-style:solid;
+  border-width:0 24px 24px 0;
+  border-color: transparent var(--wood-dark) transparent transparent;
+}
+.sticky-note-text {
+  font-family:'Cormorant Garamond',serif; font-style:italic;
+  font-size:0.8rem; color:var(--parchment); line-height:1.55;
+  opacity:0.9;
+}
+.sticky-note-by {
+  position:absolute; bottom:10px; left:14px;
+  font-size:0.5rem; letter-spacing:0.1em; color:rgba(200,184,144,0.4);
+  text-transform:uppercase;
+}
+.sticky-label {
+  font-size:0.5rem; letter-spacing:0.22em; text-transform:uppercase;
+  color:var(--parch-dim); text-align:center; margin-top:4px; opacity:0.7;
+}
+
+/* ── BADGE ── */
+.badge-item { text-align:center; }
+.badge {
+  width:100px; height:100px;
+  background: radial-gradient(circle at 40% 35%, #2a1f3d, #16102a);
+  border-radius:50%;
+  border: 2px solid rgba(160,124,200,0.3);
+  display:flex; align-items:center; justify-content:center;
+  flex-direction:column; gap:4px;
+  position:relative;
+}
+.badge::before {
+  content:'';
+  position:absolute; inset:-6px;
+  border-radius:50%;
+  border: 1px dashed rgba(201,168,76,0.3);
+}
+.badge-symbol { font-size:1.8rem; opacity:0.7; }
+.badge-text {
+  font-size:0.42rem; letter-spacing:0.12em; text-transform:uppercase;
+  color:var(--gold); opacity:0.7; text-align:center; padding:0 8px;
+  line-height:1.4;
+}
+.badge-label {
+  font-size:0.5rem; letter-spacing:0.22em; text-transform:uppercase;
+  color:var(--parch-dim); text-align:center; margin-top:6px; opacity:0.7;
+}
+
+/* ── CANDLE ── */
+#candle {
+  position:absolute; bottom:60px; right:80px; z-index:8;
+  pointer-events:none;
+}
+.candle-flame {
+  width:10px; height:18px;
+  background: radial-gradient(ellipse at 50% 80%, #fff8a0, #ffb020 50%, transparent 75%);
+  border-radius:50% 50% 30% 30%;
+  margin:0 auto;
+  animation: flicker 2.2s ease-in-out infinite alternate;
+  filter: blur(0.5px);
+}
+.candle-glow {
+  position:absolute; top:-20px; left:-30px; right:-30px; height:60px;
+  background: radial-gradient(ellipse, rgba(255,160,20,0.18) 0%, transparent 70%);
+  pointer-events:none;
+  animation: flicker 2.2s ease-in-out infinite alternate;
+}
+@keyframes flicker {
+  0%   { transform:scaleX(1) scaleY(1); opacity:1; }
+  30%  { transform:scaleX(0.92) scaleY(1.04); opacity:0.92; }
+  60%  { transform:scaleX(1.05) scaleY(0.97); opacity:0.97; }
+  100% { transform:scaleX(0.96) scaleY(1.06); opacity:0.88; }
+}
+.candle-body {
+  width:22px; height:55px;
+  background: linear-gradient(to right, #c8d0c0, #e8f0e0, #d0d8c8);
+  margin:0 auto; border-radius:2px 2px 1px 1px;
+  box-shadow: 2px 3px 8px rgba(0,0,0,0.5);
+  position:relative;
+}
+.candle-drip {
+  position:absolute; top:0; left:4px;
+  width:6px; height:14px;
+  background: linear-gradient(to bottom, #d8e0d0, rgba(216,224,208,0));
+  border-radius:0 0 4px 4px;
+}
+
+/* ── OVERLAY (letter unfold) ── */
+#overlay {
+  position:fixed; inset:0; z-index:200;
+  display:flex; align-items:center; justify-content:center;
+  pointer-events:none; opacity:0;
+  transition: opacity 0.4s ease;
+}
+#overlay.open {
+  pointer-events:all; opacity:1;
+}
+#overlay-bg {
+  position:absolute; inset:0;
+  background: rgba(10,8,4,0.85);
+  backdrop-filter: blur(4px);
+}
+
+/* letter unfold container */
+#letter-wrap {
+  position:relative; z-index:1;
+  transform-origin: center bottom;
+  transform: scaleY(0);
+  transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+#overlay.open #letter-wrap {
+  transform: scaleY(1);
+}
+
+#letter {
+  width: min(680px, 92vw);
+  max-height: 80vh;
+  background: linear-gradient(160deg, #f5eeda 0%, #ede0c0 100%);
+  border-radius:3px;
+  box-shadow: 0 20px 80px rgba(0,0,0,0.8), 0 4px 20px rgba(0,0,0,0.6);
+  position:relative; overflow:hidden;
+  display:flex; flex-direction:column;
+}
+
+/* letter top flap (decorative) */
+.letter-flap {
+  width:100%; height:80px; flex-shrink:0;
+  background: linear-gradient(160deg, #ddd0a0 0%, #c8ba80 100%);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  position:relative;
+}
+.letter-flap::after {
+  content:'';
+  position:absolute; inset:0;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.1), transparent);
+}
+
+.letter-body {
+  padding: 1.5rem 2.5rem 2rem;
+  overflow-y:auto; flex:1;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px, transparent 29px,
+    rgba(140,110,60,0.1) 29px, rgba(140,110,60,0.1) 30px
+  );
+}
+
+.letter-section-title {
+  font-family:'Cormorant Garamond',serif; font-style:italic;
+  font-size:1.8rem; font-weight:300; color:var(--ink);
+  margin-bottom:0.3rem; letter-spacing:0.02em;
+}
+.letter-section-sub {
+  font-size:0.55rem; letter-spacing:0.2em; text-transform:uppercase;
+  color:rgba(80,60,20,0.5); margin-bottom:1.5rem;
+}
+.letter-decoration {
+  font-size:1.2rem; color:rgba(140,110,60,0.4); margin-bottom:1rem;
+  font-family:'Cormorant Garamond',serif;
+}
+
+.letter-entry {
+  border-bottom: 0.5px solid rgba(140,110,60,0.15);
+  padding-bottom:1.2rem; margin-bottom:1.2rem;
+}
+.letter-entry:last-child { border-bottom:none; margin-bottom:0; }
+.letter-entry-title {
+  font-family:'Cormorant Garamond',serif; font-size:1.1rem;
+  font-style:italic; color:var(--ink); margin-bottom:0.25rem;
+}
+.letter-entry-meta {
+  font-size:0.55rem; letter-spacing:0.12em; text-transform:uppercase;
+  color:rgba(80,60,20,0.5); margin-bottom:0.5rem;
+}
+.letter-entry-body {
+  font-size:0.68rem; color:rgba(30,20,8,0.75); line-height:1.9;
+}
+.letter-tags { display:flex; flex-wrap:wrap; gap:5px; margin-top:0.6rem; }
+.letter-tag {
+  font-size:0.5rem; letter-spacing:0.1em; text-transform:uppercase;
+  padding:2px 8px; border:0.5px solid rgba(74,124,89,0.4);
+  color:rgba(40,80,50,0.8); background:rgba(74,124,89,0.07);
+}
+.letter-tag.p {
+  border-color:rgba(124,95,160,0.4); color:rgba(80,50,120,0.8);
+  background:rgba(124,95,160,0.07);
+}
+
+#letter-close {
+  position:absolute; top:12px; right:16px;
+  font-size:0.55rem; letter-spacing:0.15em; text-transform:uppercase;
+  color:rgba(80,60,20,0.5); cursor:none; z-index:2;
+  background:none; border:none;
+  padding:6px 10px;
+  transition: color 0.2s;
+}
+#letter-close:hover { color:rgba(80,60,20,0.9); }
+
+/* ── SCATTER hint ── */
+#scatter-hint {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  font-size:0.52rem; letter-spacing:0.2em; text-transform:uppercase;
+  color:rgba(200,184,144,0.25); z-index:5; pointer-events:none;
+  animation: fadeInOut 4s ease 2s forwards;
+}
+@keyframes fadeInOut {
+  0%   { opacity:0; }
+  20%  { opacity:1; }
+  80%  { opacity:1; }
+  100% { opacity:0; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- cursor -->
+<div id="cur">
+  <svg viewBox="0 0 20 20" fill="none">
+    <path d="M10 1 L11.5 8.5 L19 10 L11.5 11.5 L10 19 L8.5 11.5 L1 10 L8.5 8.5 Z"
+      fill="rgba(200,184,144,0.8)" stroke="rgba(200,184,144,0.2)" stroke-width="0.5"/>
+  </svg>
+</div>
+
+<!-- intro screen -->
+<div id="intro">
+  <div id="intro-name">your name</div>
+  <div id="intro-sub">software engineer · maker · reader</div>
+  <div id="intro-hint">click anywhere to step inside ✦</div>
+</div>
+
+<!-- desk -->
+<div id="desk">
+  <div id="desk-surface"></div>
+  <div id="grain"></div>
+
+  <!-- candle -->
+  <div id="candle">
+    <div class="candle-glow"></div>
+    <div class="candle-flame"></div>
+    <div class="candle-body">
+      <div class="candle-drip"></div>
+    </div>
+  </div>
+
+  <!-- ITEM 1: About me — envelope -->
+  <div class="item" id="item-about" style="left:12%;top:18%;" data-section="about">
+    <div class="envelope-wrap">
+      <div class="envelope-label">open me ✦</div>
+      <div class="envelope">
+        <svg class="envelope-wax" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="18" fill="#3a1a5a" opacity="0.95"/>
+          <circle cx="20" cy="20" r="14" fill="none" stroke="rgba(160,124,200,0.5)" stroke-width="0.8"/>
+          <text x="20" y="25" text-anchor="middle" font-family="Cormorant Garamond,serif" font-style="italic" font-size="14" fill="rgba(201,168,76,0.9)">✦</text>
+        </svg>
+      </div>
+      <div class="envelope-label">about me</div>
+    </div>
+  </div>
+
+  <!-- ITEM 2: Projects — notebook -->
+  <div class="item" id="item-projects" style="left:34%;top:12%;" data-section="projects">
+    <div>
+      <div class="notebook">
+        <div class="notebook-title">projects</div>
+      </div>
+      <div class="notebook-label">my work ↗</div>
+    </div>
+  </div>
+
+  <!-- ITEM 3: Experience — scroll -->
+  <div class="item" id="item-experience" style="left:58%;top:20%;" data-section="experience">
+    <div class="scroll-item">
+      <div class="scroll-roller"></div>
+      <div class="scroll-body">
+        <div class="scroll-text">experience &amp; education</div>
+      </div>
+      <div class="scroll-roller"></div>
+      <div class="scroll-label">experience</div>
+    </div>
+  </div>
+
+  <!-- ITEM 4: Research — postcard -->
+  <div class="item" id="item-research" style="left:20%;top:55%;" data-section="research">
+    <div>
+      <div class="postcard">
+        <div class="postcard-line"></div>
+        <div class="postcard-stamp">⁕</div>
+        <div class="postcard-lines"><span></span><span></span><span></span></div>
+        <div class="postcard-content">
+          <div class="postcard-content-label">field notes</div>
+          <div class="postcard-content-title">research work</div>
+        </div>
+      </div>
+      <div class="postcard-label">research</div>
+    </div>
+  </div>
+
+  <!-- ITEM 5: Wall of love — sticky note -->
+  <div class="item" id="item-love" style="left:50%;top:58%;" data-section="love">
+    <div>
+      <div class="sticky-note">
+        <div class="sticky-note-text">"she debugged my life &amp; my code in one afternoon"</div>
+        <div class="sticky-note-by">— a friend ✦</div>
+      </div>
+      <div class="sticky-label">wall of love</div>
+    </div>
+  </div>
+
+  <!-- ITEM 6: Extras — another postcard at angle -->
+  <div class="item" id="item-extras" style="left:74%;top:52%;" data-section="extras">
+    <div>
+      <div class="postcard" style="transform:rotate(3deg);background:linear-gradient(135deg,#1a2e1a,#0f1f0f);border-color:rgba(74,124,89,0.3);">
+        <div class="postcard-line" style="border-color:rgba(74,124,89,0.2)"></div>
+        <div class="postcard-stamp" style="background:linear-gradient(135deg,#1a3a1a,#2a4a2a);border-color:rgba(74,124,89,0.3);color:var(--green-l)">✿</div>
+        <div class="postcard-lines"><span style="background:rgba(74,124,89,0.15)"></span><span style="background:rgba(74,124,89,0.15)"></span><span style="background:rgba(74,124,89,0.15)"></span></div>
+        <div class="postcard-content">
+          <div class="postcard-content-label" style="color:rgba(106,170,122,0.5)">beyond code</div>
+          <div class="postcard-content-title" style="color:var(--green-l)">extras &amp; certs</div>
+        </div>
+      </div>
+      <div class="postcard-label">extracurriculars</div>
+    </div>
+  </div>
+
+</div><!-- end desk -->
+
+<!-- overlay letter -->
+<div id="overlay">
+  <div id="overlay-bg"></div>
+  <div id="letter-wrap">
+    <div id="letter">
+      <button id="letter-close">✕ &nbsp; fold back</button>
+      <div class="letter-flap"></div>
+      <div class="letter-body" id="letter-body">
+        <!-- content injected by JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="scatter-hint">drag things around · click to open</div>
+
+<script>
+// ─── CURSOR ───
+const cur = document.getElementById('cur');
+let cx=0,cy=0,tx=0,ty=0;
+document.addEventListener('mousemove',e=>{ tx=e.clientX; ty=e.clientY; });
+(function animCursor(){
+  cx+=(tx-cx)*0.18; cy+=(ty-cy)*0.18;
+  cur.style.left=cx+'px'; cur.style.top=cy+'px';
+  requestAnimationFrame(animCursor);
+})();
+
+// ─── INTRO ───
+document.getElementById('intro').addEventListener('click',function(){
+  this.classList.add('gone');
+  setTimeout(()=>this.remove(),1400);
+});
+
+// ─── DRAG ───
+let dragging=null, dragOffX=0, dragOffY=0, didDrag=false;
+document.querySelectorAll('.item').forEach(el=>{
+  el.style.transform = `rotate(${(Math.random()-0.5)*6}deg)`;
+
+  el.addEventListener('mousedown',e=>{
+    dragging=el; didDrag=false;
+    const r=el.getBoundingClientRect();
+    dragOffX=e.clientX-r.left; dragOffY=e.clientY-r.top;
+    el.classList.add('dragging');
+    e.preventDefault();
+  });
+});
+
+document.addEventListener('mousemove',e=>{
+  if(!dragging) return;
+  didDrag=true;
+  dragging.style.left=(e.clientX-dragOffX)+'px';
+  dragging.style.top=(e.clientY-dragOffY)+'px';
+});
+
+document.addEventListener('mouseup',e=>{
+  if(!dragging) return;
+  dragging.classList.remove('dragging');
+  if(!didDrag) openSection(dragging.dataset.section);
+  dragging=null;
+});
+
+// ─── SECTION CONTENT ───
+const sections = {
+  about: {
+    title: 'about me',
+    sub: 'a letter of introduction',
+    deco: '✦ ❧ ✦',
+    entries: [
+      { title:'hey, i\'m [your name]',
+        meta:'software engineer · cs graduate',
+        body:'i write code by day and make birthday cards by night. i\'m a tech grad who ended up genuinely loving software engineering — the kind of person who has opinions about API design and also about which washi tape goes best on kraft paper envelopes.\n\ni read romance novels, i make brainrot references in professional slack channels, and i believe both of those things are fully compatible with shipping good code.' },
+      { title:'what i actually do',
+        meta:'day to day',
+        body:'backend and full-stack work, some ml on the side, and occasional research. i care about the craft — clean code, good docs, systems that make sense. i also care about the people using the thing, which i think makes the code better.' },
+    ]
+  },
+  projects: {
+    title: 'projects',
+    sub: 'things i built and am not embarrassed about',
+    deco: '❧',
+    entries: [
+      { title:'Project Name One', meta:'full-stack · 2024', body:'what it does, why you built it, what you\'re proud of. be specific. two lines.', tags:['react','node','postgresql'] },
+      { title:'Project Name Two', meta:'ml / ai · 2024', body:'the one that took three all-nighters and actually worked. what problem it solved.', tags:['python','pytorch','flask'], tagsType:'p' },
+      { title:'Project Name Three', meta:'mobile · 2023', body:'shipped to real users. that\'s the bar. describe what happened.', tags:['react native','firebase'] },
+      { title:'Project Name Four', meta:'tools · 2023', body:'built because the existing solution was genuinely annoying. valid reason.', tags:['typescript','cli'], tagsType:'p' },
+    ]
+  },
+  experience: {
+    title: 'experience',
+    sub: 'the scroll of things i have done',
+    deco: '⁕',
+    entries: [
+      { title:'Software Engineer', meta:'Company Name · jan 2024 – present · full-time', body:'what you actually did here. not a job description. what did you ship, what did you learn, what made it worth showing up.' },
+      { title:'Software Engineering Intern', meta:'Company Name · jun – dec 2023', body:'the internship. one thing you built. one thing that surprised you.' },
+      { title:'BSc Computer Science', meta:'University Name · 2020 – 2024', body:'what you focused on, what your thesis was, anything worth mentioning. GPA if you\'re proud of it.' },
+    ]
+  },
+  research: {
+    title: 'research work',
+    sub: 'field notes & published findings',
+    deco: '⁕ ❧ ⁕',
+    entries: [
+      { title:'Paper Title: Make It Sound Smart But Be Honest', meta:'Conference Name · published 2024', body:'two sentences about what the paper does. what problem, what you found. not the abstract — what a human would say at dinner.' },
+      { title:'Another Research Work in Progress', meta:'Target Venue · co-authored · 2025', body:'where it\'s going, what you\'re excited about, what it\'s trying to solve.' },
+    ]
+  },
+  love: {
+    title: 'wall of love',
+    sub: 'things my people have said about me',
+    deco: '✦',
+    entries: [
+      { title:'"she debugged my life crisis and my code in the same afternoon and fixed both"', meta:'— rida · best friend & chaos co-pilot', body:'' },
+      { title:'"genuinely alarming how fast she ships. also made me a birthday card that made me cry."', meta:'— classmate · fellow survivor', body:'' },
+      { title:'"the most organized chaotic person i know. her notion is immaculate. her desk is not."', meta:'— lab partner · witness', body:'' },
+      { title:'"asked her for code review, got code review AND an emotional support text. rare."', meta:'— teammate · grateful human', body:'' },
+    ]
+  },
+  extras: {
+    title: 'beyond the code',
+    sub: 'extracurriculars & certificates',
+    deco: '✿',
+    entries: [
+      { title:'Tech Society Lead', meta:'club · 2022–present', body:'ran events, hosted workshops, survived the group chat. worth it.' },
+      { title:'Coding Bootcamp Mentor', meta:'volunteer · ongoing', body:'helped beginners get through the first scary weeks. weirdly the most rewarding thing on this list.' },
+      { title:'Best UI/UX — Hackathon 2023', meta:'48hrs · sleep deprived · somehow won', body:'the card we made for the judges was also excellent. just saying.' },
+      { title:'AWS Cloud Practitioner', meta:'certificate · amazon web services · 2024', body:'' },
+      { title:'Google Data Analytics', meta:'certificate · google · 2023', body:'' },
+      { title:'Machine Learning Specialization', meta:'certificate · coursera × stanford · 2022', body:'' },
+    ]
+  }
+};
+
+function openSection(key) {
+  const data = sections[key];
+  if(!data) return;
+
+  const body = document.getElementById('letter-body');
+  let html = `
+    <div class="letter-decoration">${data.deco}</div>
+    <div class="letter-section-title">${data.title}</div>
+    <div class="letter-section-sub">${data.sub}</div>
+  `;
+  data.entries.forEach(e=>{
+    html += `<div class="letter-entry">`;
+    html += `<div class="letter-entry-title">${e.title}</div>`;
+    if(e.meta) html += `<div class="letter-entry-meta">${e.meta}</div>`;
+    if(e.body) html += `<div class="letter-entry-body">${e.body.replace(/\n/g,'<br>')}</div>`;
+    if(e.tags){
+      const cls = e.tagsType==='p'?'letter-tag p':'letter-tag';
+      html += `<div class="letter-tags">${e.tags.map(t=>`<span class="${cls}">${t}</span>`).join('')}</div>`;
+    }
+    html += `</div>`;
+  });
+
+  body.innerHTML = html;
+  document.getElementById('overlay').classList.add('open');
+}
+
+document.getElementById('letter-close').addEventListener('click',()=>{
+  document.getElementById('overlay').classList.remove('open');
+});
+document.getElementById('overlay-bg').addEventListener('click',()=>{
+  document.getElementById('overlay').classList.remove('open');
+});
+
+// keyboard close
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') document.getElementById('overlay').classList.remove('open');
+});
+</script>
+</body>
+</html>
