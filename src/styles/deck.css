@@ -64,14 +64,14 @@
 .deck-card-title {
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: 1.2rem;
+  font-size: 1.35rem;
   color: var(--ink);
   margin-bottom: 0.3rem;
   padding-right: 2rem;
 }
 
 .deck-card-meta {
-  font-size: 0.5rem;
+  font-size: 0.65rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: rgba(80,60,20,0.5);
@@ -79,7 +79,7 @@
 }
 
 .deck-card-body {
-  font-size: 0.68rem;
+  font-size: 0.82rem;
   color: rgba(30,20,8,0.7);
   line-height: 1.8;
   margin-bottom: 0.8rem;
@@ -92,7 +92,7 @@
 }
 
 .deck-card-tag {
-  font-size: 0.45rem;
+  font-size: 0.58rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   padding: 2px 8px;
@@ -146,7 +146,7 @@
   border: none;
   color: rgba(80,60,20,0.5);
   font-family: var(--font-serif);
-  font-size: 1.2rem;
+  font-size: 1.35rem;
   cursor: pointer;
   padding: 0.3rem 0.6rem;
   transition: color 0.2s;

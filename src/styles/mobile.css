@@ -1,6 +1,6 @@
+/* ===== MOBILE: same desk design, touch-friendly ===== */
 @media (max-width: 768px) {
   html, body {
-    overflow: auto;
     cursor: default;
   }
 
@@ -8,50 +8,7 @@
     display: none !important;
   }
 
-  .desk {
-    position: relative;
-    min-height: 100vh;
-    overflow: visible;
-  }
-
-  .desk-surface {
-    position: fixed;
-    inset: 0;
-  }
-
-  .grain {
-    position: fixed;
-  }
-
-  .scatter-hint {
-    display: none;
-  }
-
-  /* Stack items vertically on mobile */
-  .desk-items-container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.5rem;
-    padding: 2rem 1rem;
-    padding-top: 3rem;
-    z-index: 10;
-  }
-
-  .item {
-    position: relative !important;
-    left: auto !important;
-    top: auto !important;
-    transform: none !important;
-    cursor: pointer;
-  }
-
-  .item:hover {
-    filter: drop-shadow(2px 8px 24px rgba(0,0,0,0.85)) brightness(1.05);
-  }
-
-  /* Candle stays decorative at top */
+  /* Candle stays decorative at top-right */
   .candle-container {
     position: fixed !important;
     top: 10px;
@@ -64,41 +21,59 @@
   .intro {
     cursor: pointer;
   }
+
+  /* Items use touch instead of drag cursor */
+  .item {
+    cursor: pointer;
+  }
+
+  /* Scatter hint hidden on mobile */
+  .scatter-hint {
+    display: none;
+  }
+
+  /* Overlay adjustments */
+  .letter {
+    width: 96vw;
+    max-height: 92vh;
+  }
+  .letter-body {
+    padding: 1rem 1.2rem 1.5rem;
+  }
+  .letter-close {
+    cursor: pointer;
+  }
 }
 
+/* Very small screens — slightly smaller desk items */
 @media (max-width: 480px) {
-  .desk-items-container {
-    padding: 1.5rem 0.8rem;
-    gap: 1.2rem;
-  }
-
   .envelope-wrap {
-    width: 160px;
+    width: 150px;
   }
   .envelope {
-    width: 160px;
-    height: 106px;
+    width: 150px;
+    height: 100px;
   }
 
   .notebook {
-    width: 120px;
-    height: 150px;
+    width: 115px;
+    height: 145px;
   }
 
   .scroll-item, .scroll-body, .scroll-roller {
-    width: 115px;
+    width: 110px;
   }
   .scroll-body {
-    height: 95px;
+    height: 90px;
   }
 
   .postcard {
-    width: 175px;
-    height: 115px;
+    width: 165px;
+    height: 110px;
   }
 
   .sticky-note, .sticky-item {
-    width: 115px;
-    height: 115px;
+    width: 110px;
+    height: 110px;
   }
 }

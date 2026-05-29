@@ -1,4 +1,5 @@
 import { aboutData } from '../../data/portfolioData';
+import hiraPhoto from '../../assets/hira.jpg.jpg';
 
 export default function AboutSection() {
   return (
@@ -6,6 +7,33 @@ export default function AboutSection() {
       <div className="letter-decoration">{aboutData.deco}</div>
       <div className="letter-section-title">{aboutData.title}</div>
       <div className="letter-section-sub">{aboutData.sub}</div>
+
+      {/* Profile photo */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        marginBottom: '1.2rem',
+      }}>
+        <div style={{
+          width: 80,
+          height: 80,
+          borderRadius: '50%',
+          overflow: 'hidden',
+          border: '1.5px solid rgba(140,110,60,0.3)',
+          boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
+        }}>
+          <img
+            src={hiraPhoto}
+            alt="Hira Sajid"
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+            }}
+          />
+        </div>
+      </div>
+
       {aboutData.entries.map((entry, i) => (
         <div className="letter-entry" key={i}>
           <div className="letter-entry-title">{entry.title}</div>

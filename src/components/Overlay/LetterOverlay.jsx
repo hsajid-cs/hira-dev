@@ -33,12 +33,20 @@ export default function LetterOverlay({ section, onClose }) {
 
   if (!SectionComponent) return null;
 
+  // Click on the overlay container itself (outside the letter) closes it
+  const handleOverlayClick = (e) => {
+    // Only close if the click is directly on the overlay or overlay-bg, not on the letter content
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
-    <div className={`overlay ${section ? 'open' : ''}`}>
+    <div className={`overlay ${section ? 'open' : ''}`} onClick={handleOverlayClick}>
       <div className="overlay-bg" onClick={onClose} />
-      <div className="letter-wrap">
+      <div className="letter-wrap" onClick={handleOverlayClick}>
         {useLetter ? (
-          <div className="letter">
+          <div className="letter" onClick={(e) => e.stopPropagation()}>
             <button className="letter-close" onClick={onClose}>
               ✕ &nbsp; fold back
             </button>
@@ -48,7 +56,7 @@ export default function LetterOverlay({ section, onClose }) {
             </div>
           </div>
         ) : (
-          <div className="letter" style={{ maxHeight: '85vh' }}>
+          <div className="letter" style={{ maxHeight: '85vh' }} onClick={(e) => e.stopPropagation()}>
             <button className="letter-close" onClick={onClose}>
               ✕ &nbsp; close
             </button>

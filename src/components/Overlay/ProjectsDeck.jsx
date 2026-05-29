@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { projectsData } from '../../data/portfolioData';
+import { useSwipe } from '../../hooks/useSwipe';
 import '../../styles/deck.css';
 
 export default function ProjectsDeck() {
@@ -32,16 +33,24 @@ export default function ProjectsDeck() {
     };
   };
 
-  const next = () => {
-    if (activeIndex < cards.length - 1) setActiveIndex(activeIndex + 1);
-  };
+  const next = useCallback(() => {
+    setActiveIndex(i => Math.min(i + 1, cards.length - 1));
+  }, [cards.length]);
 
-  const prev = () => {
-    if (activeIndex > 0) setActiveIndex(activeIndex - 1);
-  };
+  const prev = useCallback(() => {
+    setActiveIndex(i => Math.max(i - 1, 0));
+  }, []);
+
+  // Swipe support
+  const { onTouchStart, onTouchMove, onTouchEnd } = useSwipe(next, prev);
 
   return (
-    <div className="deck-container">
+    <div
+      className="deck-container"
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+    >
       <div className="letter-decoration">{projectsData.deco}</div>
       <div className="letter-section-title">{projectsData.title}</div>
       <div className="letter-section-sub">{projectsData.sub}</div>

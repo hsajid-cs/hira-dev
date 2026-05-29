@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { experienceData } from '../../data/portfolioData';
+import { useSwipe } from '../../hooks/useSwipe';
 import '../../styles/book.css';
 
 const romanNumerals = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'];
@@ -18,13 +19,34 @@ export default function ExperienceBook() {
     }, 300);
   }, []);
 
-  const nextPage = () => {
-    if (currentPage < totalPages - 1) goToPage(currentPage + 1, 'next');
-  };
+  const nextPage = useCallback(() => {
+    setCurrentPage(p => {
+      if (p < totalPages - 1) {
+        setAnimClass('turning-left');
+        setTimeout(() => {
+          setCurrentPage(p + 1);
+          setAnimClass('entering');
+        }, 300);
+      }
+      return p;
+    });
+  }, [totalPages]);
 
-  const prevPage = () => {
-    if (currentPage > 0) goToPage(currentPage - 1, 'prev');
-  };
+  const prevPage = useCallback(() => {
+    setCurrentPage(p => {
+      if (p > 0) {
+        setAnimClass('turning-right');
+        setTimeout(() => {
+          setCurrentPage(p - 1);
+          setAnimClass('entering');
+        }, 300);
+      }
+      return p;
+    });
+  }, []);
+
+  // Swipe support
+  const { onTouchStart, onTouchMove, onTouchEnd } = useSwipe(nextPage, prevPage);
 
   // Handle keyboard navigation
   const handleKeyDown = useCallback((e) => {
@@ -35,10 +57,17 @@ export default function ExperienceBook() {
       e.stopPropagation();
       prevPage();
     }
-  }, [currentPage, totalPages]);
+  }, [nextPage, prevPage]);
 
   return (
-    <div className="book-container" onKeyDown={handleKeyDown} tabIndex={0}>
+    <div
+      className="book-container"
+      onKeyDown={handleKeyDown}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+      tabIndex={0}
+    >
       <div className="letter-decoration">{experienceData.deco}</div>
       <div className="letter-section-title">{experienceData.title}</div>
       <div className="letter-section-sub">{experienceData.sub}</div>

@@ -41,20 +41,20 @@
 .book-cover-title {
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   color: var(--green-l);
   letter-spacing: 0.04em;
 }
 
 .book-cover-deco {
   color: var(--gold);
-  font-size: 1rem;
+  font-size: 1.15rem;
   opacity: 0.6;
   letter-spacing: 0.3em;
 }
 
 .book-cover-sub {
-  font-size: 0.5rem;
+  font-size: 0.65rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: rgba(122,170,138,0.5);
@@ -78,7 +78,7 @@
 .book-page-chapter {
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: 0.7rem;
+  font-size: 0.82rem;
   color: rgba(80,60,20,0.4);
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -88,13 +88,13 @@
 .book-page-title {
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: 1.4rem;
+  font-size: 1.55rem;
   color: var(--ink);
   margin-bottom: 0.3rem;
 }
 
 .book-page-meta {
-  font-size: 0.55rem;
+  font-size: 0.68rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: rgba(80,60,20,0.5);
@@ -102,7 +102,7 @@
 }
 
 .book-page-body {
-  font-size: 0.72rem;
+  font-size: 0.85rem;
   color: rgba(30,20,8,0.75);
   line-height: 1.9;
   font-family: var(--font-mono);
@@ -114,7 +114,7 @@
   right: 1.5rem;
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: 0.7rem;
+  font-size: 0.82rem;
   color: rgba(80,60,20,0.3);
 }
 
@@ -165,7 +165,7 @@
   color: rgba(80,60,20,0.6);
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: 0.8rem;
+  font-size: 0.92rem;
   padding: 0.4rem 1rem;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -184,7 +184,7 @@
 }
 
 .book-nav-indicator {
-  font-size: 0.5rem;
+  font-size: 0.65rem;
   letter-spacing: 0.15em;
   color: rgba(80,60,20,0.4);
   text-transform: uppercase;

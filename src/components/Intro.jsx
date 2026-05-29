@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import hiraPhoto from '../assets/hira.jpg.jpg';
 
 export default function Intro({ onEnter }) {
   const [gone, setGone] = useState(false);
@@ -34,6 +35,30 @@ export default function Intro({ onEnter }) {
         cursor: 'pointer',
       }}
     >
+      {/* Profile photo */}
+      <div
+        style={{
+          width: 90,
+          height: 90,
+          borderRadius: '50%',
+          overflow: 'hidden',
+          border: '1.5px solid rgba(200,184,144,0.25)',
+          boxShadow: '0 4px 24px rgba(0,0,0,0.6)',
+          opacity: 0,
+          animation: 'fadeUp 1s ease 0.1s forwards',
+        }}
+      >
+        <img
+          src={hiraPhoto}
+          alt="Hira Sajid"
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+          }}
+        />
+      </div>
+
       <div
         style={{
           fontFamily: "'Cormorant Garamond', serif",
