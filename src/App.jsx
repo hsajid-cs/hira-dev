@@ -35,8 +35,9 @@ export default function App() {
       section: 'about',
       left: '12%',
       top: '18%',
-      mobileLeft: '6%',
-      mobileTop: '12%',
+      mobileLeft: '10%',
+      mobileTop: '16%',
+      mobileRotation: -4.5,
       rotation: rotations[0],
       Component: Envelope,
     },
@@ -45,8 +46,9 @@ export default function App() {
       section: 'projects',
       left: '34%',
       top: '12%',
-      mobileLeft: '62%',
-      mobileTop: '8%',
+      mobileLeft: '52%',
+      mobileTop: '10%',
+      mobileRotation: 3.8,
       rotation: rotations[1],
       Component: Notebook,
     },
@@ -55,8 +57,9 @@ export default function App() {
       section: 'experience',
       left: '58%',
       top: '20%',
-      mobileLeft: '8%',
-      mobileTop: '44%',
+      mobileLeft: '12%',
+      mobileTop: '48%',
+      mobileRotation: -2.4,
       rotation: rotations[2],
       Component: Scroll,
     },
@@ -65,8 +68,9 @@ export default function App() {
       section: 'research',
       left: '20%',
       top: '55%',
-      mobileLeft: '58%',
-      mobileTop: '42%',
+      mobileLeft: '56%',
+      mobileTop: '38%',
+      mobileRotation: 2.6,
       rotation: rotations[3],
       Component: () => <Postcard variant="default" />,
     },
@@ -75,8 +79,9 @@ export default function App() {
       section: 'love',
       left: '50%',
       top: '58%',
-      mobileLeft: '10%',
+      mobileLeft: '26%',
       mobileTop: '72%',
+      mobileRotation: -3.6,
       rotation: rotations[4],
       Component: StickyNote,
     },
@@ -85,8 +90,9 @@ export default function App() {
       section: 'extras',
       left: '74%',
       top: '52%',
-      mobileLeft: '56%',
-      mobileTop: '74%',
+      mobileLeft: '62%',
+      mobileTop: '70%',
+      mobileRotation: 1.8,
       rotation: rotations[5],
       Component: () => <Postcard variant="green" />,
     },
@@ -121,6 +127,7 @@ export default function App() {
             top,
             mobileLeft,
             mobileTop,
+            mobileRotation,
             rotation,
             Component,
           }) => (
@@ -130,7 +137,7 @@ export default function App() {
               section={section}
               style={
                 isMobile
-                  ? { left: mobileLeft, top: mobileTop }
+                  ? { left: mobileLeft, top: mobileTop, transform: `rotate(${mobileRotation || 0}deg)` }
                   : { left, top }
               }
               rotation={rotation}
