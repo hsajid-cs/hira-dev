@@ -33,7 +33,8 @@ export const projectsData = {
       meta: 'Full-Stack · 2025',
       body: 'A social voting platform enabling link sharing and community-driven rankings. Built with Clerk authentication, React + Vite frontend, and FastAPI backend with Neon DB for real-time vote tracking.',
       tags: ['react', 'fastapi', 'neon db', 'clerk'],
-      tagsType: 'green'
+      tagsType: 'green',
+      link: 'https://ratemydost.hirasajid.dev/'
     },
     {
       title: 'AgriTech Lens',

@@ -68,6 +68,17 @@ export default function ProjectsDeck() {
             <div className="deck-card-title">{card.title}</div>
             <div className="deck-card-meta">{card.meta}</div>
             <div className="deck-card-body">{card.body}</div>
+            {card.link && (
+              <a
+                href={card.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="deck-card-link"
+                onClick={(e) => e.stopPropagation()}
+              >
+                View Live ↗
+              </a>
+            )}
             <div className="deck-card-tags">
               {card.tags && card.tags.map((tag, ti) => (
                 <span
