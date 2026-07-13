@@ -74,7 +74,7 @@ export default function Intro({ onEnter }) {
       </div>
       <div
         style={{
-          fontSize: '0.6rem',
+          fontSize: '0.75rem',
           letterSpacing: '0.28em',
           textTransform: 'uppercase',
           color: 'var(--parch-dim)',
@@ -86,7 +86,7 @@ export default function Intro({ onEnter }) {
       </div>
       <div
         style={{
-          fontSize: '0.55rem',
+          fontSize: '0.7rem',
           letterSpacing: '0.18em',
           color: 'rgba(200,184,144,0.4)',
           marginTop: '2rem',

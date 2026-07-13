@@ -54,7 +54,7 @@
 }
 
 .book-cover-sub {
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: rgba(122,170,138,0.5);
@@ -94,7 +94,7 @@
 }
 
 .book-page-meta {
-  font-size: 0.68rem;
+  font-size: 0.78rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: rgba(80,60,20,0.5);
@@ -102,7 +102,7 @@
 }
 
 .book-page-body {
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   color: rgba(30,20,8,0.75);
   line-height: 1.9;
   font-family: var(--font-mono);
@@ -184,7 +184,7 @@
 }
 
 .book-nav-indicator {
-  font-size: 0.65rem;
+  font-size: 0.75rem;
   letter-spacing: 0.15em;
   color: rgba(80,60,20,0.4);
   text-transform: uppercase;

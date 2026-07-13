@@ -64,7 +64,7 @@ export default function AboutSection() {
           <a
             href="mailto:hirasajid.dev@gmail.com"
             style={{
-              fontSize: '0.5rem',
+              fontSize: '0.72rem',
               letterSpacing: '0.1em',
               textTransform: 'uppercase',
               padding: '3px 10px',
@@ -82,7 +82,7 @@ export default function AboutSection() {
             target="_blank"
             rel="noopener noreferrer"
             style={{
-              fontSize: '0.5rem',
+              fontSize: '0.72rem',
               letterSpacing: '0.1em',
               textTransform: 'uppercase',
               padding: '3px 10px',
@@ -100,7 +100,7 @@ export default function AboutSection() {
             target="_blank"
             rel="noopener noreferrer"
             style={{
-              fontSize: '0.5rem',
+              fontSize: '0.72rem',
               letterSpacing: '0.1em',
               textTransform: 'uppercase',
               padding: '3px 10px',

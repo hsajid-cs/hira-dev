@@ -55,7 +55,7 @@
   margin-bottom:0.3rem; letter-spacing:0.02em;
 }
 .letter-section-sub {
-  font-size:0.7rem; letter-spacing:0.2em; text-transform:uppercase;
+  font-size:0.8rem; letter-spacing:0.2em; text-transform:uppercase;
   color:rgba(80,60,20,0.5); margin-bottom:1.5rem;
 }
 .letter-decoration {
@@ -68,19 +68,19 @@
 }
 .letter-entry:last-child { border-bottom:none; margin-bottom:0; }
 .letter-entry-title {
-  font-family: var(--font-serif); font-size:1.25rem;
+  font-family: var(--font-serif); font-size:1.35rem;
   font-style:italic; color:var(--ink); margin-bottom:0.25rem;
 }
 .letter-entry-meta {
-  font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase;
+  font-size:0.78rem; letter-spacing:0.12em; text-transform:uppercase;
   color:rgba(80,60,20,0.5); margin-bottom:0.5rem;
 }
 .letter-entry-body {
-  font-size:0.82rem; color:rgba(30,20,8,0.75); line-height:1.9;
+  font-size:0.95rem; color:rgba(30,20,8,0.75); line-height:1.9;
 }
 .letter-tags { display:flex; flex-wrap:wrap; gap:5px; margin-top:0.6rem; }
 .letter-tag {
-  font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase;
+  font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase;
   padding:3px 10px; border:0.5px solid rgba(74,124,89,0.4);
   color:rgba(40,80,50,0.8); background:rgba(74,124,89,0.07);
 }
@@ -90,7 +90,7 @@
 }
 .letter-close {
   position:absolute; top:12px; right:16px;
-  font-size:0.7rem; letter-spacing:0.15em; text-transform:uppercase;
+  font-size:0.8rem; letter-spacing:0.15em; text-transform:uppercase;
   color:rgba(80,60,20,0.5); cursor:pointer; z-index:2;
   background:none; border:none;
   padding:6px 10px;

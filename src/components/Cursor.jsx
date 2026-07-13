@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 
 export default function Cursor() {
   const curRef = useRef(null);
-  const pos = useRef({ cx: 0, cy: 0, tx: 0, ty: 0 });
+  const pos = useRef({ x: -100, y: -100, raf: 0 });
 
   useEffect(() => {
     // Only show on hover-capable devices
@@ -11,30 +11,30 @@ export default function Cursor() {
 
     document.body.style.cursor = 'none';
 
-    const onMove = (e) => {
-      pos.current.tx = e.clientX;
-      pos.current.ty = e.clientY;
-    };
-
-    document.addEventListener('mousemove', onMove);
-
-    let raf;
-    const animate = () => {
-      const p = pos.current;
-      p.cx += (p.tx - p.cx) * 0.18;
-      p.cy += (p.ty - p.cy) * 0.18;
+    const apply = () => {
+      pos.current.raf = 0;
       if (curRef.current) {
-        curRef.current.style.left = p.cx + 'px';
-        curRef.current.style.top = p.cy + 'px';
+        curRef.current.style.transform =
+          `translate3d(${pos.current.x}px, ${pos.current.y}px, 0) translate(-50%, -50%)`;
       }
-      raf = requestAnimationFrame(animate);
     };
-    raf = requestAnimationFrame(animate);
+
+    // Follow the mouse 1:1, coalescing high-frequency events into one
+    // update per frame so we never do more work than the display can show.
+    const onMove = (e) => {
+      pos.current.x = e.clientX;
+      pos.current.y = e.clientY;
+      if (!pos.current.raf) {
+        pos.current.raf = requestAnimationFrame(apply);
+      }
+    };
+
+    document.addEventListener('mousemove', onMove, { passive: true });
 
     return () => {
       document.body.style.cursor = '';
       document.removeEventListener('mousemove', onMove);
-      cancelAnimationFrame(raf);
+      cancelAnimationFrame(pos.current.raf);
     };
   }, []);
 
@@ -44,13 +44,14 @@ export default function Cursor() {
       className="custom-cursor"
       style={{
         position: 'fixed',
+        left: 0,
+        top: 0,
         width: 20,
         height: 20,
         pointerEvents: 'none',
         zIndex: 99999,
-        transform: 'translate(-50%, -50%)',
-        transition: 'transform 0.15s ease',
-        mixBlendMode: 'screen',
+        transform: 'translate3d(-100px, -100px, 0) translate(-50%, -50%)',
+        willChange: 'transform',
       }}
     >
       <svg viewBox="0 0 20 20" fill="none" width="100%" height="100%">

@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 export function useDrag(onClickCallback) {
   const ref = useRef(null);
@@ -6,41 +6,68 @@ export function useDrag(onClickCallback) {
   const dragState = useRef({
     startX: 0,
     startY: 0,
-    offsetX: 0,
-    offsetY: 0,
+    // Translation committed by previous drags
+    baseX: 0,
+    baseY: 0,
+    // Translation of the drag in progress
+    dx: 0,
+    dy: 0,
     didDrag: false,
+    // The element's original transform (its rotation), captured on first drag
+    baseTransform: null,
+    raf: 0,
   });
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    const s = dragState.current;
+
+    // Moving via transform instead of left/top keeps the drag on the
+    // compositor — no layout or drop-shadow repaint per mouse event.
+    const applyTransform = () => {
+      s.raf = 0;
+      el.style.transform =
+        `translate3d(${s.baseX + s.dx}px, ${s.baseY + s.dy}px, 0) ${s.baseTransform}`;
+    };
 
     const handleStart = (clientX, clientY) => {
-      const rect = el.getBoundingClientRect();
-      dragState.current = {
-        startX: clientX,
-        startY: clientY,
-        offsetX: clientX - rect.left,
-        offsetY: clientY - rect.top,
-        didDrag: false,
-      };
+      if (s.baseTransform === null) {
+        s.baseTransform = el.style.transform || '';
+      }
+      s.startX = clientX;
+      s.startY = clientY;
+      s.dx = 0;
+      s.dy = 0;
+      s.didDrag = false;
       setIsDragging(true);
     };
 
     const handleMove = (clientX, clientY) => {
       if (!isDragging) return;
-      const dx = Math.abs(clientX - dragState.current.startX);
-      const dy = Math.abs(clientY - dragState.current.startY);
-      if (dx > 3 || dy > 3) {
-        dragState.current.didDrag = true;
+      s.dx = clientX - s.startX;
+      s.dy = clientY - s.startY;
+      if (Math.abs(s.dx) > 3 || Math.abs(s.dy) > 3) {
+        s.didDrag = true;
       }
-      el.style.left = (clientX - dragState.current.offsetX) + 'px';
-      el.style.top = (clientY - dragState.current.offsetY) + 'px';
+      if (!s.raf) {
+        s.raf = requestAnimationFrame(applyTransform);
+      }
     };
 
     const handleEnd = () => {
+      if (s.raf) {
+        cancelAnimationFrame(s.raf);
+      }
+      if (s.didDrag) {
+        s.baseX += s.dx;
+        s.baseY += s.dy;
+      }
+      s.dx = 0;
+      s.dy = 0;
+      applyTransform();
       setIsDragging(false);
-      if (!dragState.current.didDrag && onClickCallback) {
+      if (!s.didDrag && onClickCallback) {
         onClickCallback();
       }
     };
@@ -66,15 +93,19 @@ export function useDrag(onClickCallback) {
 
     el.addEventListener('mousedown', onMouseDown);
     el.addEventListener('touchstart', onTouchStart, { passive: true });
-    
+
     if (isDragging) {
-      document.addEventListener('mousemove', onMouseMove);
+      document.addEventListener('mousemove', onMouseMove, { passive: true });
       document.addEventListener('mouseup', onMouseUp);
       document.addEventListener('touchmove', onTouchMove, { passive: true });
       document.addEventListener('touchend', onTouchEnd);
     }
 
     return () => {
+      if (s.raf) {
+        cancelAnimationFrame(s.raf);
+        s.raf = 0;
+      }
       el.removeEventListener('mousedown', onMouseDown);
       el.removeEventListener('touchstart', onTouchStart);
       document.removeEventListener('mousemove', onMouseMove);
