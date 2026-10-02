@@ -1,165 +1,153 @@
-import { useState, useMemo, useCallback } from 'react';
-import Cursor from './components/Cursor';
-import Intro from './components/Intro';
-import DeskSurface from './components/Desk/DeskSurface';
-import DeskItem from './components/Desk/DeskItem';
-import Envelope from './components/Desk/Envelope';
-import Notebook from './components/Desk/Notebook';
-import Scroll from './components/Desk/Scroll';
-import Postcard from './components/Desk/Postcard';
-import StickyNote from './components/Desk/StickyNote';
-import Candle from './components/Desk/Candle';
-import LetterOverlay from './components/Overlay/LetterOverlay';
-import { useMediaQuery } from './hooks/useMediaQuery';
-import './styles/desk.css';
-import './styles/mobile.css';
+import { useMemo, useState } from 'react';
+import {
+  profile, projects, experience, education, volunteering, certifications,
+} from './data/portfolio';
+import Hira, { art } from './components/Hira';
+import { categories, traits, traitKey, ProjectBlock, Job, CraftGrid } from './traits';
 
-// Generate random rotations for desk items (organic feel)
-const rotations = Array.from({ length: 6 }, () => (Math.random() - 0.5) * 6);
+const start = { hair: 'long', outfit: 'tee', accessory: 'none', sticker: 'none', craft: 'none', books: 'none' };
+
+function Icon({ id }) {
+  return (
+    <svg viewBox="-46 -40 92 80" width="52" height="46" aria-hidden="true">
+      <g transform="scale(.9)">{art[id]}</g>
+    </svg>
+  );
+}
 
 export default function App() {
-  const [activeSection, setActiveSection] = useState(null);
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const [pick, setPick] = useState(start);
+  const [tab, setTab] = useState('outfit');
+  const [focus, setFocus] = useState(null);
 
-  const openSection = useCallback((section) => {
-    setActiveSection(section);
-  }, []);
+  const cat = categories.find((c) => c.id === tab);
+  const keys = useMemo(
+    () => categories.filter((c) => pick[c.id] !== 'none').map((c) => traitKey(c, pick[c.id])),
+    [pick],
+  );
+  const meaningful = keys.filter((k) => traits[k].body);
+  const shown = focus && keys.includes(focus) ? focus : meaningful[meaningful.length - 1] || null;
+  const trait = shown && traits[shown];
 
-  const closeSection = useCallback(() => {
-    setActiveSection(null);
-  }, []);
-
-  const deskItems = useMemo(() => [
-    {
-      id: 'item-about',
-      section: 'about',
-      left: '12%',
-      top: '18%',
-      mobileLeft: '10%',
-      mobileTop: '16%',
-      mobileRotation: -4.5,
-      rotation: rotations[0],
-      Component: Envelope,
-    },
-    {
-      id: 'item-projects',
-      section: 'projects',
-      left: '34%',
-      top: '12%',
-      mobileLeft: '52%',
-      mobileTop: '10%',
-      mobileRotation: 3.8,
-      rotation: rotations[1],
-      Component: Notebook,
-    },
-    {
-      id: 'item-experience',
-      section: 'experience',
-      left: '58%',
-      top: '20%',
-      mobileLeft: '12%',
-      mobileTop: '48%',
-      mobileRotation: -2.4,
-      rotation: rotations[2],
-      Component: Scroll,
-    },
-    {
-      id: 'item-research',
-      section: 'research',
-      left: '20%',
-      top: '55%',
-      mobileLeft: '56%',
-      mobileTop: '38%',
-      mobileRotation: 2.6,
-      rotation: rotations[3],
-      Component: () => <Postcard variant="default" />,
-    },
-    {
-      id: 'item-volunteering',
-      section: 'volunteering',
-      left: '50%',
-      top: '58%',
-      mobileLeft: '26%',
-      mobileTop: '72%',
-      mobileRotation: -3.6,
-      rotation: rotations[4],
-      Component: StickyNote,
-    },
-    {
-      id: 'item-certifications',
-      section: 'certifications',
-      left: '74%',
-      top: '52%',
-      mobileLeft: '62%',
-      mobileTop: '70%',
-      mobileRotation: 1.8,
-      rotation: rotations[5],
-      Component: () => <Postcard variant="green" />,
-    },
-  ], []);
+  const choose = (c, value) => {
+    setPick((p) => ({ ...p, [c.id]: value }));
+    setFocus(value === 'none' ? null : traitKey(c, value));
+  };
+  const surprise = () => {
+    const next = {};
+    categories.forEach((c) => {
+      const pool = c.none ? ['none', ...c.options.map(([v]) => v)] : c.options.map(([v]) => v);
+      next[c.id] = pool[Math.floor(Math.random() * pool.length)];
+    });
+    setPick(next);
+    setFocus(null);
+  };
+  const reset = () => { setPick(start); setFocus(null); };
 
   return (
-    <>
-      <Cursor />
-      <Intro />
-
-      <div className="desk">
-        <DeskSurface />
-
-        {/* Candle */}
-        <div
-          className="candle-container"
-          style={
-            isMobile
-              ? {}
-              : { position: 'absolute', bottom: 60, right: 80, zIndex: 8 }
-          }
-        >
-          <Candle />
+    <div className="page">
+      <header className="top">
+        <div>
+          <h1>Build your Hira</h1>
+          <p>Pick things for a little me. Each one says something true. <a href="#plain">Skip the game</a></p>
         </div>
+      </header>
 
-        {/* Desk items */}
-        <div className="desk-items-container">
-          {deskItems.map(({
-            id,
-            section,
-            left,
-            top,
-            mobileLeft,
-            mobileTop,
-            mobileRotation,
-            rotation,
-            Component,
-          }) => (
-            <DeskItem
-              key={id}
-              id={id}
-              section={section}
-              style={
-                isMobile
-                  ? { left: mobileLeft, top: mobileTop, transform: `rotate(${mobileRotation || 0}deg)` }
-                  : { left, top }
-              }
-              rotation={rotation}
-              onClick={openSection}
-            >
-              <Component />
-            </DeskItem>
-          ))}
-        </div>
-
-        {/* Scatter hint */}
-        {!isMobile && (
-          <div className="scatter-hint">
-            Drag to rearrange · Click to open
+      <main className="builder">
+        <section className="stage" aria-label="Preview">
+          <Hira pick={pick} />
+          <div className="stage-actions">
+            <button type="button" onClick={surprise}>Surprise me</button>
+            <button type="button" onClick={reset}>Reset</button>
           </div>
-        )}
-      </div>
+        </section>
 
-      {/* Overlay */}
-      {activeSection && (
-        <LetterOverlay section={activeSection} onClose={closeSection} />
-      )}
-    </>
+        <section className="side">
+          <div className="tabs" role="tablist" aria-label="What to change">
+            {categories.map((c) => (
+              <button key={c.id} type="button" role="tab" aria-selected={tab === c.id} className={tab === c.id ? 'on' : ''} onClick={() => setTab(c.id)}>
+                {c.label}
+              </button>
+            ))}
+          </div>
+
+          <ul className="options" role="group" aria-label={cat.label}>
+            {cat.none && (
+              <li>
+                <button type="button" aria-pressed={pick[cat.id] === 'none'} className={pick[cat.id] === 'none' ? 'on' : ''} onClick={() => choose(cat, 'none')}>
+                  <span className="none">none</span>
+                </button>
+              </li>
+            )}
+            {cat.options.map(([value, label]) => (
+              <li key={value}>
+                <button type="button" aria-pressed={pick[cat.id] === value} className={pick[cat.id] === value ? 'on' : ''} onClick={() => choose(cat, value)}>
+                  {cat.icons ? <Icon id={value} /> : <span className="swatch" data-v={value} />}
+                  <span>{label}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+
+          <div className="says" aria-live="polite">
+            {trait ? (
+              <>
+                <p className="kicker">this says</p>
+                <h2>{trait.title}</h2>
+                <p className="line">{trait.line}</p>
+                {trait.body && <div className="body">{trait.body()}</div>}
+              </>
+            ) : (
+              <>
+                <p className="kicker">this says</p>
+                <h2>Not much yet.</h2>
+                <p className="line">Pick a laptop sticker, a book, some craft supplies. Hair and the plain tee are just for fun.</p>
+              </>
+            )}
+          </div>
+
+          {meaningful.length > 1 && (
+            <div className="sofar">
+              <p className="kicker">so far</p>
+              <ul>
+                {meaningful.map((k) => (
+                  <li key={k}><button type="button" className={k === shown ? 'on' : ''} onClick={() => setFocus(k)}>{traits[k].title}</button></li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </section>
+      </main>
+
+      <section className="plain" id="plain" aria-label="The plain version">
+        <h2>Or, the short version</h2>
+        <div className="grid">
+          <div>
+            <h3>About</h3>
+            {profile.about.map((t) => <p key={t}>{t}</p>)}
+            <p className="dim">{profile.place}</p>
+            <h3>Contact</h3>
+            <p><a href={`mailto:${profile.email}`}>{profile.email}</a></p>
+            <p><a href={profile.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a> · <a href={profile.github} target="_blank" rel="noopener noreferrer">GitHub</a></p>
+          </div>
+          <div>
+            <h3>Experience</h3>
+            {experience.filter((e) => e.role).map((e) => <Job key={e.id} id={e.id} />)}
+            <h3>Education</h3>
+            <p><b>{education.degree}</b>, {education.school}</p>
+            <h3>Courses</h3>
+            <ul className="list">{certifications.map((c) => <li key={c.name}>{c.name}, {c.by} ({c.when})</li>)}</ul>
+          </div>
+          <div className="wide">
+            <h3>Projects</h3>
+            <div className="projgrid">{projects.map((p) => <ProjectBlock key={p.id} id={p.id} />)}</div>
+            <h3>Things I&apos;ve made</h3>
+            <CraftGrid />
+            <h3>Volunteering</h3>
+            <ul className="list">{volunteering.map((v) => <li key={v.name + v.where}><b>{v.name}</b>, {v.where} <span className="dim">({v.when})</span></li>)}</ul>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }
