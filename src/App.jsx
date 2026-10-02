@@ -1,165 +1,136 @@
-import { useState, useMemo, useCallback } from 'react';
-import Cursor from './components/Cursor';
-import Intro from './components/Intro';
-import DeskSurface from './components/Desk/DeskSurface';
-import DeskItem from './components/Desk/DeskItem';
-import Envelope from './components/Desk/Envelope';
-import Notebook from './components/Desk/Notebook';
-import Scroll from './components/Desk/Scroll';
-import Postcard from './components/Desk/Postcard';
-import StickyNote from './components/Desk/StickyNote';
-import Candle from './components/Desk/Candle';
-import LetterOverlay from './components/Overlay/LetterOverlay';
-import { useMediaQuery } from './hooks/useMediaQuery';
-import './styles/desk.css';
-import './styles/mobile.css';
+import { useCallback, useMemo, useState } from 'react';
+import { profile, experience, education, certifications, volunteering } from './data/portfolio';
+import { BOARDS, pins, matches } from './pins';
+import Pin from './components/Pin';
+import Detail from './components/Detail';
 
-// Generate random rotations for desk items (organic feel)
-const rotations = Array.from({ length: 6 }, () => (Math.random() - 0.5) * 6);
+const base = import.meta.env.BASE_URL;
 
 export default function App() {
-  const [activeSection, setActiveSection] = useState(null);
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const [query, setQuery] = useState('');
+  const [board, setBoard] = useState('all');
+  const [open, setOpen] = useState(null);
 
-  const openSection = useCallback((section) => {
-    setActiveSection(section);
-  }, []);
+  const visible = useMemo(
+    () => pins.filter((p) => (board === 'all' || p.board === board) && matches(p, query)),
+    [query, board],
+  );
+  const openPin = useCallback((pin, el) => setOpen({ pin, el }), []);
+  const close = useCallback(() => setOpen(null), []);
 
-  const closeSection = useCallback(() => {
-    setActiveSection(null);
-  }, []);
-
-  const deskItems = useMemo(() => [
-    {
-      id: 'item-about',
-      section: 'about',
-      left: '12%',
-      top: '18%',
-      mobileLeft: '10%',
-      mobileTop: '16%',
-      mobileRotation: -4.5,
-      rotation: rotations[0],
-      Component: Envelope,
-    },
-    {
-      id: 'item-projects',
-      section: 'projects',
-      left: '34%',
-      top: '12%',
-      mobileLeft: '52%',
-      mobileTop: '10%',
-      mobileRotation: 3.8,
-      rotation: rotations[1],
-      Component: Notebook,
-    },
-    {
-      id: 'item-experience',
-      section: 'experience',
-      left: '58%',
-      top: '20%',
-      mobileLeft: '12%',
-      mobileTop: '48%',
-      mobileRotation: -2.4,
-      rotation: rotations[2],
-      Component: Scroll,
-    },
-    {
-      id: 'item-research',
-      section: 'research',
-      left: '20%',
-      top: '55%',
-      mobileLeft: '56%',
-      mobileTop: '38%',
-      mobileRotation: 2.6,
-      rotation: rotations[3],
-      Component: () => <Postcard variant="default" />,
-    },
-    {
-      id: 'item-volunteering',
-      section: 'volunteering',
-      left: '50%',
-      top: '58%',
-      mobileLeft: '26%',
-      mobileTop: '72%',
-      mobileRotation: -3.6,
-      rotation: rotations[4],
-      Component: StickyNote,
-    },
-    {
-      id: 'item-certifications',
-      section: 'certifications',
-      left: '74%',
-      top: '52%',
-      mobileLeft: '62%',
-      mobileTop: '70%',
-      mobileRotation: 1.8,
-      rotation: rotations[5],
-      Component: () => <Postcard variant="green" />,
-    },
-  ], []);
+  const shown = BOARDS.filter((b) => visible.some((p) => p.board === b.id));
 
   return (
     <>
-      <Cursor />
-      <Intro />
-
-      <div className="desk">
-        <DeskSurface />
-
-        {/* Candle */}
-        <div
-          className="candle-container"
-          style={
-            isMobile
-              ? {}
-              : { position: 'absolute', bottom: 60, right: 80, zIndex: 8 }
-          }
-        >
-          <Candle />
+      <header className="top">
+        <div className="profile">
+          <figure className="polaroid">
+            <img src={`${base}${profile.photo}`} alt="Hira Sajid" width="160" height="160" />
+          </figure>
+          <div className="who">
+            <h1>HIRA SAJID</h1>
+            <p className="role">{profile.role}</p>
+            <p className="intro">{profile.intro}</p>
+            <nav className="links" aria-label="Sections">
+              <a href="#boards">Boards</a>
+              <a href="#about">About &amp; experience</a>
+              <a href="#hello">Say hi</a>
+            </nav>
+          </div>
         </div>
+      </header>
 
-        {/* Desk items */}
-        <div className="desk-items-container">
-          {deskItems.map(({
-            id,
-            section,
-            left,
-            top,
-            mobileLeft,
-            mobileTop,
-            mobileRotation,
-            rotation,
-            Component,
-          }) => (
-            <DeskItem
-              key={id}
-              id={id}
-              section={section}
-              style={
-                isMobile
-                  ? { left: mobileLeft, top: mobileTop, transform: `rotate(${mobileRotation || 0}deg)` }
-                  : { left, top }
-              }
-              rotation={rotation}
-              onClick={openSection}
+      <div className="bar">
+        <label className="search">
+          <span className="sr">Search</span>
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search Hira's portfolio..."
+          />
+        </label>
+        <div className="chips" role="tablist" aria-label="Boards">
+          {[{ id: 'all', title: 'Everything' }, ...BOARDS].map((b) => (
+            <button
+              key={b.id}
+              type="button"
+              role="tab"
+              aria-selected={board === b.id}
+              className={board === b.id ? 'on' : ''}
+              onClick={() => setBoard(b.id)}
             >
-              <Component />
-            </DeskItem>
+              {b.title.replace("Things I've ", '').replace('Things I ', '')}
+            </button>
           ))}
         </div>
-
-        {/* Scatter hint */}
-        {!isMobile && (
-          <div className="scatter-hint">
-            Drag to rearrange · Click to open
-          </div>
-        )}
       </div>
 
-      {/* Overlay */}
-      {activeSection && (
-        <LetterOverlay section={activeSection} onClose={closeSection} />
-      )}
+      <main id="boards">
+        {shown.length === 0 && (
+          <p className="empty">Nothing pinned for “{query}” yet. Try “AI”, “craft”, “software” or “projects”.</p>
+        )}
+        {shown.map((b) => (
+          <section className="board" key={b.id} aria-labelledby={`b-${b.id}`}>
+            <div className="board-head">
+              <h2 id={`b-${b.id}`}>{b.title}</h2>
+              <p className="hand">{b.blurb}</p>
+            </div>
+            <div className={`masonry m-${b.id}`}>
+              {visible.filter((p) => p.board === b.id).map((p, i) => (
+                <Pin key={p.id} pin={p} index={i} onOpen={openPin} />
+              ))}
+            </div>
+          </section>
+        ))}
+
+        <section className="useful" id="about" aria-label="About and experience">
+          <div className="scrap about">
+            <h2>About</h2>
+            {profile.about.map((t) => <p key={t}>{t}</p>)}
+            <p className="hand">{profile.place}</p>
+          </div>
+          <div className="scrap work">
+            <h2>Experience</h2>
+            <ol>
+              {experience.filter((e) => e.role).map((e) => (
+                <li key={e.id}>
+                  <h3>{e.role}, {e.company}</h3>
+                  <p className="when">{e.dates}</p>
+                  <ul>{e.points.map((pt) => <li key={pt}>{pt}</li>)}</ul>
+                </li>
+              ))}
+              <li>
+                <h3>{education.degree}, {education.short}</h3>
+                <p className="when">{education.school}</p>
+                <p>{education.body}</p>
+              </li>
+            </ol>
+          </div>
+          <div className="scrap extra">
+            <h2>Certificates</h2>
+            <ul className="plain">
+              {certifications.map((c) => <li key={c.name}><b>{c.name}</b><br />{c.by} · {c.when}</li>)}
+            </ul>
+            <h2>Volunteering</h2>
+            <ul className="plain">
+              {volunteering.map((v) => <li key={v.name + v.where}><b>{v.name}</b>, {v.where}<br /><span>{v.when}</span></li>)}
+            </ul>
+          </div>
+        </section>
+      </main>
+
+      <footer className="hello" id="hello">
+        <p className="hand">want to make something together?</p>
+        <h2>Say hi</h2>
+        <div className="hello-links">
+          <a href={`mailto:${profile.email}`}>{profile.email}</a>
+          <a href={profile.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+          <a href={profile.github} target="_blank" rel="noopener noreferrer">GitHub</a>
+        </div>
+      </footer>
+
+      {open && <Detail pin={open.pin} origin={open.el} onClose={close} />}
     </>
   );
 }
