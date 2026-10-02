@@ -1,165 +1,111 @@
-import { useState, useMemo, useCallback } from 'react';
-import Cursor from './components/Cursor';
-import Intro from './components/Intro';
-import DeskSurface from './components/Desk/DeskSurface';
-import DeskItem from './components/Desk/DeskItem';
-import Envelope from './components/Desk/Envelope';
-import Notebook from './components/Desk/Notebook';
-import Scroll from './components/Desk/Scroll';
-import Postcard from './components/Desk/Postcard';
-import StickyNote from './components/Desk/StickyNote';
-import Candle from './components/Desk/Candle';
-import LetterOverlay from './components/Overlay/LetterOverlay';
-import { useMediaQuery } from './hooks/useMediaQuery';
-import './styles/desk.css';
-import './styles/mobile.css';
-
-// Generate random rotations for desk items (organic feel)
-const rotations = Array.from({ length: 6 }, () => (Math.random() - 0.5) * 6);
+import { useCallback, useEffect, useRef, useState } from 'react';
+import Room from './room/Room';
+import Panel from './room/Panels';
+import { useViewBox } from './room/useViewBox';
+import { FULL, byId, stations } from './room/layout';
+import { profile } from './data/portfolio';
 
 export default function App() {
-  const [activeSection, setActiveSection] = useState(null);
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const [active, setActive] = useState(null);
+  const [note, setNote] = useState(null);
+  const [station, setStation] = useState(1);
+  const { svgRef, goTo } = useViewBox(FULL);
+  const touch = useRef(null);
 
-  const openSection = useCallback((section) => {
-    setActiveSection(section);
+  const narrow = () => svgRef.current.getBoundingClientRect().width < 760;
+
+  const stationBox = useCallback((i) => {
+    const r = svgRef.current.getBoundingClientRect();
+    const w = 400;
+    const h = (w * r.height) / r.width;
+    const x = Math.min(Math.max(stations[i].cx - w / 2, 0), 1000 - w);
+    const y = Math.min(Math.max(340 - h / 2, 0), Math.max(700 - h, 0));
+    return [x, y, w, h];
+  }, [svgRef]);
+
+  // On a phone the room is seen in three stops; on a wide screen, all at once.
+  const home = useCallback((i = station, ms) => {
+    goTo(narrow() ? stationBox(i) : FULL, ms);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [goTo, station, stationBox]);
+
+  useEffect(() => {
+    if (narrow()) goTo(stationBox(1), 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const closeSection = useCallback(() => {
-    setActiveSection(null);
-  }, []);
+  const target = (spot) => {
+    const s = spot.focus || spot;
+    const r = svgRef.current.getBoundingClientRect();
+    const phone = r.width < 760;
+    const vw = phone ? r.width : r.width * 0.5;
+    const vh = phone ? r.height * 0.34 : r.height * 0.8;
+    const scale = Math.min(Math.min(vw / s.w, vh / s.h) * 0.8, 5);
+    const bw = r.width / scale;
+    const bh = r.height / scale;
+    const [fx, fy] = phone ? [0.5, 0.2] : [0.27, 0.5];
+    const cx = s.x + s.w / 2;
+    const cy = s.y + s.h / 2;
+    return [cx - fx * bw, cy - fy * bh, bw, bh];
+  };
 
-  const deskItems = useMemo(() => [
-    {
-      id: 'item-about',
-      section: 'about',
-      left: '12%',
-      top: '18%',
-      mobileLeft: '10%',
-      mobileTop: '16%',
-      mobileRotation: -4.5,
-      rotation: rotations[0],
-      Component: Envelope,
-    },
-    {
-      id: 'item-projects',
-      section: 'projects',
-      left: '34%',
-      top: '12%',
-      mobileLeft: '52%',
-      mobileTop: '10%',
-      mobileRotation: 3.8,
-      rotation: rotations[1],
-      Component: Notebook,
-    },
-    {
-      id: 'item-experience',
-      section: 'experience',
-      left: '58%',
-      top: '20%',
-      mobileLeft: '12%',
-      mobileTop: '48%',
-      mobileRotation: -2.4,
-      rotation: rotations[2],
-      Component: Scroll,
-    },
-    {
-      id: 'item-research',
-      section: 'research',
-      left: '20%',
-      top: '55%',
-      mobileLeft: '56%',
-      mobileTop: '38%',
-      mobileRotation: 2.6,
-      rotation: rotations[3],
-      Component: () => <Postcard variant="default" />,
-    },
-    {
-      id: 'item-volunteering',
-      section: 'volunteering',
-      left: '50%',
-      top: '58%',
-      mobileLeft: '26%',
-      mobileTop: '72%',
-      mobileRotation: -3.6,
-      rotation: rotations[4],
-      Component: StickyNote,
-    },
-    {
-      id: 'item-certifications',
-      section: 'certifications',
-      left: '74%',
-      top: '52%',
-      mobileLeft: '62%',
-      mobileTop: '70%',
-      mobileRotation: 1.8,
-      rotation: rotations[5],
-      Component: () => <Postcard variant="green" />,
-    },
-  ], []);
+  const open = useCallback((id) => {
+    setNote(null);
+    setActive(id);
+    goTo(target(byId[id]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [goTo]);
+
+  const back = useCallback(() => {
+    setActive(null);
+    setNote(null);
+    home();
+  }, [home]);
+
+  const go = (d) => {
+    const i = Math.min(Math.max(station + d, 0), stations.length - 1);
+    setStation(i);
+    goTo(stationBox(i));
+  };
+
+  useEffect(() => {
+    const onKey = (e) => e.key === 'Escape' && (active ? back() : setNote(null));
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [active, back]);
+
+  const onTouchStart = (e) => { touch.current = e.touches[0].clientX; };
+  const onTouchEnd = (e) => {
+    if (touch.current == null || active || !narrow()) return;
+    const dx = e.changedTouches[0].clientX - touch.current;
+    touch.current = null;
+    if (Math.abs(dx) > 60) go(dx < 0 ? 1 : -1);
+  };
 
   return (
-    <>
-      <Cursor />
-      <Intro />
-
-      <div className="desk">
-        <DeskSurface />
-
-        {/* Candle */}
-        <div
-          className="candle-container"
-          style={
-            isMobile
-              ? {}
-              : { position: 'absolute', bottom: 60, right: 80, zIndex: 8 }
-          }
-        >
-          <Candle />
+    <div className="app">
+      <header className="head">
+        <div className="who">
+          <h1>Hira Sajid</h1>
+          <p>{profile.short}</p>
         </div>
-
-        {/* Desk items */}
-        <div className="desk-items-container">
-          {deskItems.map(({
-            id,
-            section,
-            left,
-            top,
-            mobileLeft,
-            mobileTop,
-            mobileRotation,
-            rotation,
-            Component,
-          }) => (
-            <DeskItem
-              key={id}
-              id={id}
-              section={section}
-              style={
-                isMobile
-                  ? { left: mobileLeft, top: mobileTop, transform: `rotate(${mobileRotation || 0}deg)` }
-                  : { left, top }
-              }
-              rotation={rotation}
-              onClick={openSection}
-            >
-              <Component />
-            </DeskItem>
-          ))}
-        </div>
-
-        {/* Scatter hint */}
-        {!isMobile && (
-          <div className="scatter-hint">
-            Drag to rearrange · Click to open
+        <nav className="controls" aria-label="Quick links">
+          <button type="button" className={!active ? 'on' : ''} onClick={back}>Room</button>
+          <button type="button" className={active === 'notebook' ? 'on' : ''} onClick={() => open('notebook')}>Resume</button>
+          <button type="button" className={active === 'phone' ? 'on' : ''} onClick={() => open('phone')}>Contact</button>
+        </nav>
+      </header>
+      <div className="stage" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+        <Room svgRef={svgRef} active={active} note={note} onOpen={open} onNote={setNote} onBackground={() => (active ? back() : setNote(null))} />
+        {!active && (
+          <div className="walk" aria-label="Move around the room">
+            <button type="button" onClick={() => go(-1)} disabled={station === 0} aria-label="Look left">‹</button>
+            <span>{stations[station].label}</span>
+            <button type="button" onClick={() => go(1)} disabled={station === stations.length - 1} aria-label="Look right">›</button>
           </div>
         )}
       </div>
-
-      {/* Overlay */}
-      {activeSection && (
-        <LetterOverlay section={activeSection} onClose={closeSection} />
-      )}
-    </>
+      {active && <Panel spot={byId[active]} onClose={back} />}
+    </div>
   );
 }
