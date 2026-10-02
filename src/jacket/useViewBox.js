@@ -17,7 +17,7 @@ export function useViewBox(full) {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return set(target);
     const t0 = performance.now();
     const step = (now) => {
-      const k = Math.min(1, (now - t0) / ms);
+      const k = Math.min(1, Math.max(0, (now - t0) / ms));
       const e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
       set(from.map((v, i) => v + (target[i] - v) * e));
       if (k < 1) raf.current = requestAnimationFrame(step);
