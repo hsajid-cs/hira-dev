@@ -92,6 +92,7 @@ export const experienceData = {
         'Deployed and maintained services on Azure VMs, DigitalOcean, and OVH, using Docker as part of deployment workflows.'
       ],
       toolGroups: [
+        { label: 'Web & backend', items: ['React', 'Next.js', 'FastAPI', 'Spring Boot (Java)', 'NestJS'] },
         { label: 'Cloud & deployment', items: ['Azure VM', 'DigitalOcean', 'OVH', 'Docker'] },
         { label: 'APIs & integrations', items: ['MLS feeds', 'ATTOM', 'Zoneomics', 'YouTube APIs', 'Mapbox'] },
         { label: 'Communications & auth', items: ['Twilio', 'Nylas', 'Resend', 'Clerk', 'Supabase'] },
