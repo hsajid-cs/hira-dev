@@ -75,7 +75,21 @@ export const experienceData = {
     {
       title: 'Jr. Software Engineer',
       meta: 'Quest · January 2026 – Present · Islamabad',
-      body: 'Built 10+ automation workflows on n8n and Make.com. Developed an automated YouTube pipeline with ElevenLabs voice cloning. Designed LangChain AI workflows with Serper and Groq. Implemented RAG pipelines over 3,000+ embedded chunks. Managed async LLM job queues with Redis and Celery. Deployed 5+ services on DigitalOcean and Azure via Docker.'
+      body: 'Building AI-powered workflows, RAG features, API integrations, and deployed services. Work spans automation, real estate data, multimodal AI tools, and integrations across external platforms.',
+      highlights: [
+        'Built 10+ workflows with n8n and Make.com, alongside LangChain-based AI pipelines, retrieval workflows, and asynchronous LLM jobs using Redis and Celery.',
+        'Integrated a wide range of third-party APIs, including MLS real estate feeds, ATTOM, Zoneomics, YouTube Data, Reporting and Analytics APIs, and Mapbox.',
+        'Built messaging and account flows with Twilio, Nylas, Resend, Clerk, and Supabase.',
+        'Added PDF, Excel, and Word document generation directly inside AI chat experiences, including a RAG application, and worked with Claude-supported citations for grounded responses.',
+        'Worked across Claude, DeepSeek, Gemini, JEV, and OpenAI models, as well as Google AI Studio, ElevenLabs, Retell AI, and HeyGen for generative AI features.',
+        'Deployed and maintained services on Azure VMs, DigitalOcean, and OVH, using Docker as part of deployment workflows.'
+      ],
+      toolGroups: [
+        { label: 'Cloud & deployment', items: ['Azure VM', 'DigitalOcean', 'OVH', 'Docker'] },
+        { label: 'APIs & integrations', items: ['MLS feeds', 'ATTOM', 'Zoneomics', 'YouTube APIs', 'Mapbox'] },
+        { label: 'Communications & auth', items: ['Twilio', 'Nylas', 'Resend', 'Clerk', 'Supabase'] },
+        { label: 'AI & automation', items: ['LangChain', 'RAG', 'n8n', 'Make.com', 'Claude', 'DeepSeek', 'Gemini', 'JEV', 'OpenAI', 'Google AI Studio', 'ElevenLabs', 'Retell AI', 'HeyGen'] }
+      ]
     },
     {
       title: 'AI Intern',
