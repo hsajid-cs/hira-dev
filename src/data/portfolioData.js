@@ -22,6 +22,13 @@ export const projectsData = {
   deco: '❧',
   entries: [
     {
+      title: 'Voice AI Agent',
+      meta: 'Conversational AI / Backend',
+      body: 'Built a voice AI agent using Retell AI, with a knowledge base to answer questions during calls. Connected Google APIs for sending emails and integrated a Twilio phone number. Developed a Python backend to expose APIs for the agent and deployed it on DigitalOcean.',
+      tags: ['retell ai', 'python', 'digitalocean', 'twilio', 'google apis'],
+      tagsType: 'green'
+    },
+    {
       title: 'PANDA',
       meta: 'ML / AI · 2024 – Present',
       body: 'EEG-based infant pain detection using a layered ML pipeline. Processed 12,000+ EEG samples and benchmarked CNNs, transformers, and classical ML approaches. Custom architecture achieved 87.3% accuracy.',
