@@ -113,7 +113,7 @@ export default function App() {
 
       <section id="experience" className="content-section experience-section">
         <SectionTitle number="03" eyebrow="THE PATH" title="Where I've worked" note="The work, teams, and lessons along the way." />
-        <div className="timeline">{professionalExperience.map((entry, index) => <article className="timeline-item reveal" key={entry.title + index}><div className="timeline-number">{String(index + 1).padStart(2, '0')}</div><div className="timeline-content"><p className="timeline-meta">{entry.meta}</p><h3>{entry.title}</h3><p>{entry.body}</p></div><span className="timeline-mark" aria-hidden="true">✳</span></article>)}</div>
+        <div className="timeline">{professionalExperience.map((entry, index) => <article className="timeline-item reveal" key={entry.title + index}><div className="timeline-number">{String(index + 1).padStart(2, '0')}</div><div className="timeline-content"><p className="timeline-meta">{entry.meta}</p><h3>{entry.title}</h3><p>{entry.body}</p>{entry.highlights && <ul className="experience-highlights">{entry.highlights.map((item, i) => <li key={i}>{item}</li>)}</ul>}{entry.toolGroups && <div className="experience-tools">{entry.toolGroups.map(group => <div className="experience-tool-group" key={group.label}><span className="experience-tool-label">{group.label}</span><div className="experience-tool-tags">{group.items.map(item => <span key={item}>{item}</span>)}</div></div>)}</div>}</div><span className="timeline-mark" aria-hidden="true">✳</span></article>)}</div>
       </section>
 
       <section id="education" className="content-section education-section">
