@@ -1031,3 +1031,65 @@ h1,h2,h3,p{margin-top:0}
   }
   .reveal{opacity:1;transform:none}
 }
+
+
+/* Readability pass: keep the retro density without forcing tiny text */
+.browser-toolbar{font-size:12px}
+.address-row{font-size:12px}
+.address-row input{font-size:12px}
+.portal-logo small{font-size:11px}
+.portal-copy span{font-size:12px}
+.portal-badge span{font-size:9px}
+.portal-badge strong{font-size:10px}
+.retro-nav a{font-size:12px}
+.ticker{font-size:12px}
+.welcome-panel::after{font-size:11px}
+.welcome-kicker{font-size:12px}
+.welcome-panel>p:not(.hero-lead){font-size:15px}
+.retro-button{font-size:12px}
+.hero-note{font-size:12px}
+.profile-title{font-size:12px}
+.profile-card table{font-size:12px}
+.profile-stamps span{font-size:9px}
+.window-titlebar{font-size:12px}
+.eyebrow{font-size:11px}
+.about-copy{font-size:14px}
+.interest-box{font-size:12px}
+.folder-path{font-size:11px}
+.project-title-row h3{font-size:14px}
+.project-number{font-size:10px}
+.project-meta{font-size:11px}
+.project-description{font-size:14px;line-height:1.58}
+.project-tags span{font-size:10px;padding:3px 5px}
+.classic-link,.project-link{font-size:11px}
+.experience-meta{font-size:11px}
+.experience-content>p:last-of-type{font-size:14px}
+.experience-highlights{font-size:13px;line-height:1.6}
+.toolbox-title{font-size:11px}
+.tool-row{font-size:12px;line-height:1.4}
+.education-meta,.research-meta{font-size:11px}
+.education-card p:last-child{font-size:14px}
+.research-number{font-size:11px}
+.research-card p:last-child{font-size:14px}
+.contact-panel>div:last-child>p:not(.eyebrow){font-size:14px}
+.sidebar-title{font-size:12px}
+.sidebar-body{font-size:12px}
+.link-list a{font-size:12px}
+.compact-list strong{font-size:11px}
+.compact-list span{font-size:10px}
+.counter-label{font-size:10px}
+.tiny-copy{font-size:10px}
+.under-construction{font-size:10px}
+.site-footer{font-size:11px}
+
+@media(max-width:680px){
+  .browser-titlebar{font-size:11px}
+  .portal-copy strong{font-size:13px}
+  .portal-copy span{font-size:10px}
+  .retro-nav a{font-size:11px;padding:7px 10px}
+  .ticker{font-size:11px}
+}
+
+@media(max-width:430px){
+  .profile-card th,.profile-card td{font-size:10px}
+}
