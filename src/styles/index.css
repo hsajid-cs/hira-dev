@@ -756,6 +756,31 @@ h1,h2,h3,p{margin-top:0}
   color:#000080;
   font:bold 19px Georgia,serif;
 }
+.education-stats{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:12px 0;
+}
+.education-stat{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  min-width:110px;
+  padding:10px 14px;
+  background:#fff8bd;
+  border:2px solid #000080;
+  box-shadow:3px 3px 0 #b7a44e;
+}
+.education-stat span{
+  color:#800080;
+  font:bold 11px 'Courier New',monospace;
+  letter-spacing:.04em;
+}
+.education-stat strong{
+  color:#000080;
+  font:bold 25px Georgia,serif;
+}
 .education-card p:last-child{font-size:11px;margin-bottom:0}
 
 .research-card{
