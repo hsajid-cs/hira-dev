@@ -279,6 +279,10 @@ export default function App() {
               <div>
                 <p className="education-meta">{entry.meta}</p>
                 <h3>{entry.title}</h3>
+                {entry.gpa && entry.classRank && <div className="education-stats" aria-label="Academic results">
+                  <div className="education-stat"><span>GPA</span><strong>{entry.gpa}</strong></div>
+                  <div className="education-stat"><span>CLASS RANK</span><strong>{entry.classRank}</strong></div>
+                </div>}
                 <p>{entry.body}</p>
               </div>
             </article>)}
