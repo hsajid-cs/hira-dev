@@ -107,7 +107,7 @@ export const experienceData = {
     {
       title: 'BS Computer Science',
       meta: 'National University of Sciences & Technology (NUST) · Islamabad',
-      body: 'Specialized in AI/ML, software engineering, and systems design. Completed projects spanning EEG-based pain detection, computer vision, speech recognition, and full-stack application development.'
+      body: 'GPA: 3.74 | Class Rank: 7/120. Specialized in AI/ML, software engineering, and systems design. Completed projects spanning EEG-based pain detection, computer vision, speech recognition, and full-stack application development.'
     }
   ]
 };
